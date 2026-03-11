@@ -27,16 +27,16 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
       </div>
 
       <div className="mt-10">
-        <h3 className="font-semibold mb-3">Technologies</h3>
+  <h3 className="font-semibold mb-3">Technologies</h3>
 
-        <ul className="flex gap-3 flex-wrap">
-          {project.technologies.map((tech) => (
-            <li key={tech} className="bg-gray-200 px-3 py-1 rounded">
-              {tech}
-            </li>
-          ))}
-        </ul>
-      </div>
+  <ul className="flex gap-3 flex-wrap">
+    {(project.technologies ?? []).map((tech) => (
+      <li key={tech} className="bg-gray-200 px-3 py-1 rounded">
+        {tech}
+      </li>
+    ))}
+  </ul>
+</div>
     </div>
   );
 }

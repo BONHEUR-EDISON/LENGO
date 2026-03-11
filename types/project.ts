@@ -5,6 +5,6 @@ export type Project = {
   category: string
   images: string[]
   description: string
-  technologies?: string[]
-  result?: string
+  technologies: string[]
+  result: string
 }
