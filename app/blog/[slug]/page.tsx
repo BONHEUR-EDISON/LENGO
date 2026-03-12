@@ -40,22 +40,31 @@ export default async function BlogDetail({ params }: { params: Promise<{ slug: s
   // Générer LeftBar
   const files = await fs.readdir(postsDirectory);
   const otherPosts = (
-    await Promise.all(
-      files.map(async (file) => {
-        if (file.replace(/\.mdx$/, "") === slug) return null;
-        const fContent = await fs.readFile(path.join(postsDirectory, file), "utf-8");
-        const { data } = matter(fContent);
-        return {
-          slug: file.replace(/\.mdx$/, ""),
-          title: data.title,
-          date: data.date,
-          image: data.image,
-          summary: data.summary,
-        };
-      })
-    )
-  ).filter(Boolean);
+  await Promise.all(
+    files.map(async (file) => {
+      if (file.replace(/\.mdx$/, "") === slug) return null;
 
+      const fContent = await fs.readFile(path.join(postsDirectory, file), "utf-8");
+      const { data } = matter(fContent);
+
+      return {
+        slug: file.replace(/\.mdx$/, ""),
+        title: data.title,
+        date: data.date,
+        image: data.image,
+        summary: data.summary,
+      };
+    })
+  )
+).filter(
+  (post): post is {
+    slug: string;
+    title: string;
+    date: string;
+    image: string;
+    summary: string;
+  } => post !== null
+);
   return (
     <>
       <SEO title={data.title} description={data.summary} image={data.image} />
