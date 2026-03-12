@@ -1,16 +1,17 @@
+// app/blog/[slug]/page.tsx
 import { promises as fs } from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { serialize } from "next-mdx-remote/serialize"; // plus de MDXRemoteSerializeResult
+import { serialize } from "next-mdx-remote/serialize";
 import type { MDXRemoteProps } from "next-mdx-remote/rsc";
 
 import Header from "@/components/Blog/Header"; // Server Component
 import Footer from "@/components/Blog/Footer"; // Server Component
 import LeftBar from "@/components/Blog/LeftBar"; // Client Component
 import TableOfContents from "@/components/Blog/TableOfContents"; // Client Component
-import BlogContent from "@/components/Blog/BlogContent"; // Client Component
+import BlogContent from "@/components/Blog/BlogContent"; // Server Component
 import SEO from "@/components/Blog/SEO";
 import { readingTime } from "@/lib/readingTime";
 import { getAllPosts, BlogPost } from "@/lib/getAllPosts";
@@ -28,10 +29,12 @@ interface BlogDetailProps {
 export default async function BlogDetail({ params }: BlogDetailProps) {
   const { slug } = await params;
 
+  // Récupération de tous les posts
   const posts: BlogPost[] = await getAllPosts();
   const post = posts.find((p) => p.slug === slug);
   if (!post) return notFound();
 
+  // Lecture du fichier MDX
   const filePath = path.join(process.cwd(), "data/blog/posts", `${slug}.mdx`);
   const fileContent = await fs.readFile(filePath, "utf-8");
   const { content, data } = matter(fileContent);
@@ -47,13 +50,16 @@ export default async function BlogDetail({ params }: BlogDetailProps) {
       <Header />
 
       <main className="max-w-7xl mx-auto px-6 py-16 flex gap-8">
+        {/* Sidebar avec les autres posts */}
         <LeftBar posts={otherPosts} featuredSlug={slug} />
 
         <div className="flex-1">
+          {/* Image principale */}
           <div className="relative w-full h-80 rounded-xl overflow-hidden mb-8">
             <img src={data.image} alt={data.title} className="object-cover w-full h-full" />
           </div>
 
+          {/* Meta info */}
           <div className="flex items-center gap-4 mb-2">
             <time className="text-sm text-gray-500 dark:text-gray-400">{data.date}</time>
             <span className="text-sm text-gray-500 dark:text-gray-400">• {time}</span>
@@ -62,13 +68,15 @@ export default async function BlogDetail({ params }: BlogDetailProps) {
           <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">{data.title}</h1>
           <p className="text-gray-600 dark:text-gray-300 mb-8">{data.summary}</p>
 
+          {/* Sommaire + Contenu */}
           <div className="md:flex gap-8">
-            <TableOfContents mdxContent={content} scrollSpy={true} />
+            <TableOfContents mdxContent={content} scrollSpy={true} /> {/* Client Component */}
             <article className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 flex-1">
-              <BlogContent mdxSource={mdxSource} />
+              <BlogContent mdxSource={mdxSource} /> {/* Server Component */}
             </article>
           </div>
 
+          {/* Lien retour */}
           <Link href="/blog" className="inline-block mt-10 text-blue-600 dark:text-blue-400 underline">
             ← Retour au blog
           </Link>
