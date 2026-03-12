@@ -21,7 +21,10 @@ export default function ProduitsPage() {
   const [sort, setSort] = useState<SortOption>("default");
 
   const handleAddToCart = (product: typeof allProducts[0]) => {
-    addToCart({ id: product.id, name: product.name, price: product.price });
+    addToCart({
+      id: product.id, name: product.name, price: product.price,
+      image: ""
+    });
     showToast({ id: product.id, name: product.name });
   };
 

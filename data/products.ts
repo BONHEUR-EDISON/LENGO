@@ -11,6 +11,7 @@ export interface FAQItem {
 }
 
 export interface Product {
+  isNew: boolean;
   id: number;
   name: string;
   slug: string;           // Ajouté pour navigation et url
