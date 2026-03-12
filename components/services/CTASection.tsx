@@ -1,10 +1,26 @@
 'use client';
 
 import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function CTASection() {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  const isDark = theme === "dark";
+
   return (
-    <section className="py-24 px-6 text-center bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-indigo-900 dark:to-blue-800">
+    <section
+      className={`py-24 px-6 text-center ${
+        isDark
+          ? "bg-gradient-to-r from-indigo-900 to-blue-800"
+          : "bg-gradient-to-r from-blue-600 to-indigo-600"
+      }`}
+    >
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -25,7 +41,11 @@ export default function CTASection() {
           href="/contact"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="inline-block px-8 py-4 bg-white text-blue-600 dark:text-indigo-800 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+          className={`inline-block px-8 py-4 rounded-full font-semibold shadow-lg transition-all duration-300 ${
+            isDark
+              ? "bg-white text-indigo-800 hover:shadow-xl"
+              : "bg-white text-blue-600 hover:shadow-xl"
+          }`}
         >
           Demander un devis
         </motion.a>

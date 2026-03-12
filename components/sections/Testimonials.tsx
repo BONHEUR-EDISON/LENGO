@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import { testimonials } from "@/data/testimonials";
 import { useTheme } from "next-themes";
 
@@ -21,7 +22,6 @@ export default function TestimonialsCarousel() {
     if (!carouselRef.current) return;
     const maxScroll = carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
     if (carouselRef.current.scrollLeft >= maxScroll - 1) {
-      // retour au début
       carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
     } else {
       carouselRef.current.scrollBy({ left: cardWidth, behavior: "smooth" });
@@ -105,23 +105,21 @@ export default function TestimonialsCarousel() {
             transition={{ duration: 0.5, delay: index * 0.2 }}
             whileHover={{ scale: 1.05 }}
           >
-            {/* Hover overlay subtil */}
-            <motion.div
-              className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-10"
-            />
-
-            <img
-              src={t.avatar}
+            {/* Avatar */}
+            <Image
+              src={t.avatar} // /images/avatar.png
               alt={t.name}
-              className="w-20 h-20 rounded-full mb-4 object-cover relative z-20"
+              width={80}
+              height={80}
+              className="rounded-full mb-4 object-cover"
             />
-            <p className={`mb-4 relative z-20 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+            <p className={`mb-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
               "{t.message}"
             </p>
-            <h3 className={`text-xl font-semibold relative z-20 ${isDark ? "text-white" : "text-black"}`}>
+            <h3 className={`text-xl font-semibold ${isDark ? "text-white" : "text-black"}`}>
               {t.name}
             </h3>
-            <span className={`text-sm relative z-20 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+            <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
               {t.role}
             </span>
           </motion.div>

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue } from "framer-motion";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, ShoppingCart } from "lucide-react";
 import { useTheme } from "next-themes";
 import Magnetic from "../effet/Magnetic";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -19,6 +21,10 @@ export default function Header() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
+  const { cart } = useCart();
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  // Scroll + initialisation
   useEffect(() => {
     setMounted(true);
     const savedLocale = localStorage.getItem("locale");
@@ -39,6 +45,8 @@ export default function Header() {
     { name: locale === "fr" ? "Services" : "Services", href: "/services" },
     { name: locale === "fr" ? "Projets" : "Projects", href: "/projects" },
     { name: locale === "fr" ? "Technologies" : "Technologies", href: "/technologies" },
+    { name: locale === "fr" ? "Produits" : "Products", href: "/produits" },
+    { name: locale === "fr" ? "Blog" : "Blog", href: "/blog" },
     { name: locale === "fr" ? "Contact" : "Contact", href: "/contact" },
   ];
 
@@ -48,7 +56,7 @@ export default function Header() {
         mouseX.set(e.clientX);
         mouseY.set(e.clientY);
       }}
-      className="fixed top-0 left-0 w-full z-50 transition-colors duration-500"
+      className="fixed top-0 left-0 w-full z-50"
     >
       {/* Aurora Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -64,107 +72,81 @@ export default function Header() {
         />
       </div>
 
-      {/* Header Container */}
+      {/* Header Container avec fond bleu iOS au top et transparent au scroll */}
       <div
-        className={`relative transition-all duration-500 ${
+        className={`relative transition-all duration-500 backdrop-blur-xl ${
           blur
-            ? "backdrop-blur-xl bg-gradient-to-r from-white/50 to-white/30 dark:from-black/50 dark:to-black/30 border-b border-white/20 dark:border-white/10"
-            : "bg-transparent"
+            ? "bg-transparent border-b border-white/20 dark:border-white/10"
+            : "bg-blue-500/80 border-b border-blue-300/50"
         }`}
       >
         <div className="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between perspective-[1200px]">
+
           {/* LOGO */}
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" aria-label="Accueil" className="flex items-center gap-3 ml-[-10px]">
             <motion.div
-              whileHover={{ rotate: 15, scale: 1.05 }}
-              className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-md"
+              whileHover={{ rotate: 15, scale: 1.1 }}
+              className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-lg"
             >
-              L
+              <Image
+                src="/images/logo.png"
+                alt="Logo LENGO"
+                width={40}
+                height={40}
+                className="object-cover"
+                priority
+              />
             </motion.div>
             <div className="leading-tight">
-              <p className={`text-lg font-semibold tracking-tight ${isDark ? "text-white" : "text-white"}`}>
-                LENGO
-              </p>
-              <p className="text-[10px] tracking-widest text-gray-500 dark:text-white uppercase">
-                Engineering
-              </p>
+              <p className="text-lg font-semibold tracking-tight text-white">LENGO</p>
+              <p className="text-[10px] tracking-widest text-gray-200 uppercase">Engineering</p>
             </div>
           </Link>
 
-          {/* NAVIGATION */}
-          <motion.nav
-            whileHover={{ rotateX: 3, rotateY: -3 }}
-            transition={{ type: "spring", stiffness: 120 }}
-            className="hidden md:flex items-center gap-10"
-          >
+          {/* NAV DESKTOP */}
+          <div className="hidden md:flex items-center gap-6 relative">
             {links.map((link) => (
               <Magnetic key={link.name}>
                 <Link
                   href={link.href}
-                  className={`relative font-medium group ${
-                    isDark ? "text-white" : "text-white"
-                  }`}
+                  className="relative font-medium group text-white"
                 >
                   {link.name}
                   <motion.span
                     initial={{ scaleX: 0 }}
                     whileHover={{ scaleX: 1 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute left-0 -bottom-1 h-[2px] w-full bg-gradient-to-r from-blue-500 to-indigo-500 origin-left"
+                    className="absolute left-0 -bottom-1 h-[2px] w-full bg-gradient-to-r from-blue-200 to-indigo-200 origin-left"
                   />
                 </Link>
               </Magnetic>
             ))}
-          </motion.nav>
 
-          {/* ACTIONS */}
-          <div className="flex items-center gap-4">
+            {/* Panier Icon */}
+            <Link href="/panier" className="relative ml-4 text-white">
+              <ShoppingCart size={24} />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+
             {/* Theme toggle */}
-            <button
-              onClick={() => setTheme(isDark ? "light" : "dark")}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800"
-            >
-              {mounted && (isDark ? <Sun size={18} /> : <Moon size={18} />)}
-            </button>
-
-            {/* CTA Desktop */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="hidden md:block px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg"
-            >
-              {locale === "fr" ? "Demander un devis" : "Request a quote"}
-            </motion.button>
-
-            {/* LANGUAGE SELECTOR */}
-            <div className="flex gap-2">
+            {mounted && (
               <button
-                className={`px-3 py-1 rounded ${
-                  locale === "fr"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 dark:bg-zinc-700"
-                }`}
-                onClick={() => changeLocale("fr")}
+                onClick={() => setTheme(isDark ? "light" : "dark")}
+                className="ml-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition"
               >
-                FR
+                {isDark ? <Sun size={18} /> : <Moon size={18} />}
               </button>
-              <button
-                className={`px-3 py-1 rounded ${
-                  locale === "en"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 dark:bg-zinc-700"
-                }`}
-                onClick={() => changeLocale("en")}
-              >
-                EN
-              </button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button className="md:hidden" onClick={() => setOpen(!open)}>
-              {open ? <X size={28} /> : <Menu size={28} />}
-            </button>
+            )}
           </div>
+
+          {/* MOBILE MENU BUTTON */}
+          <button className="md:hidden" onClick={() => setOpen(!open)} aria-label="Menu mobile">
+            {open ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
       </div>
 
@@ -175,43 +157,41 @@ export default function Header() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
-            className="md:hidden backdrop-blur-xl bg-white/95 dark:bg-black/95 border-b border-white/20"
+            className="md:hidden backdrop-blur-xl bg-blue-500/90 border-b border-blue-300/50 shadow-lg"
           >
             <div className="flex flex-col gap-6 p-8">
               {links.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-lg font-medium text-gray-800 dark:text-gray-100"
+                  className="text-lg font-medium text-white"
                   onClick={() => setOpen(false)}
                 >
                   {link.name}
                 </Link>
               ))}
 
-              <div className="flex gap-2 mt-4 justify-center">
-                <button
-                  className={`px-3 py-2 rounded ${
-                    locale === "fr" ? "bg-blue-600 text-white" : "bg-gray-200 dark:bg-zinc-700"
-                  }`}
-                  onClick={() => changeLocale("fr")}
-                >
-                  FR
-                </button>
-                <button
-                  className={`px-3 py-2 rounded ${
-                    locale === "en" ? "bg-blue-600 text-white" : "bg-gray-200 dark:bg-zinc-700"
-                  }`}
-                  onClick={() => changeLocale("en")}
-                >
-                  EN
-                </button>
+              {/* Mobile Panier + Theme */}
+              <div className="flex gap-4 mt-4 justify-center">
+                <Link href="/panier" className="relative">
+                  <ShoppingCart size={24} />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                      {totalItems}
+                    </span>
+                  )}
+                </Link>
+
+                {mounted && (
+                  <button
+                    onClick={() => setTheme(isDark ? "light" : "dark")}
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition"
+                  >
+                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                  </button>
+                )}
               </div>
 
-              {/* Mobile CTA flottant */}
-              <button className="mt-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg">
-                {locale === "fr" ? "Demander un devis" : "Request a quote"}
-              </button>
             </div>
           </motion.div>
         )}

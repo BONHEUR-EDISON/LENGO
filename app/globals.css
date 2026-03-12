@@ -26,3 +26,13 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@media (min-width: 768px) {
+  .flex > div {
+    min-width: calc(33.333% - 2rem); /* 3 colonnes avec gap */
+  }
+}
+.opacity-0 { opacity: 0; }
+.opacity-100 { opacity: 1; }
+.-translate-y-4 { transform: translateY(-1rem); }
+.translate-y-0 { transform: translateY(0); }

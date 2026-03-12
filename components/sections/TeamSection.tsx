@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 
 type TeamMember = {
   name: string;
@@ -12,29 +13,25 @@ type TeamMember = {
 };
 
 const team: TeamMember[] = [
-  { name: 'Jean Mbala', role: 'CEO', avatar: 'images/avatar-male.png' },
-  { name: 'Alice Kamanzi', role: 'CTO', avatar: 'images/avatar.png' },
-  { name: 'David Luyeye', role: 'Lead Developer', avatar: 'images/avatar-male.png' },
-  { name: 'Marie Tumba', role: 'Product Manager', avatar: 'images/avatar.png' },
+  { name: 'Jean Mbala', role: 'CEO', avatar: '/images/avatar-male.png' },
+  { name: 'Alice Kamanzi', role: 'CTO', avatar: '/images/avatar.png' },
+  { name: 'David Luyeye', role: 'Lead Developer', avatar: '/images/avatar-male.png' },
+  { name: 'Marie Tumba', role: 'Product Manager', avatar: '/images/avatar.png' },
 ];
 
-export default function InfiniteTeamCarouselAutoplay() {
+export default function TeamCarousel() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Duplication pour effet infini
-  const extendedTeam = [...team, ...team, ...team];
-  const cardWidth = 320; // largeur approximative d’une carte + marge
+  const extendedTeam = [...team, ...team, ...team]; // effet infini
+  const cardWidth = 320;
 
   const scroll = (direction: 'left' | 'right') => {
     if (!carouselRef.current) return;
-    carouselRef.current.scrollBy({
-      left: direction === 'left' ? -cardWidth : cardWidth,
-      behavior: 'smooth',
-    });
+    carouselRef.current.scrollBy({ left: direction === 'left' ? -cardWidth : cardWidth, behavior: 'smooth' });
   };
 
   const resetScrollIfNeeded = () => {
@@ -51,7 +48,6 @@ export default function InfiniteTeamCarouselAutoplay() {
     const ref = carouselRef.current;
     if (!ref) return;
 
-    // Position initiale au milieu
     ref.scrollLeft = ref.scrollWidth / 3;
 
     const handleScroll = () => {
@@ -62,7 +58,6 @@ export default function InfiniteTeamCarouselAutoplay() {
 
     ref.addEventListener('scroll', handleScroll);
 
-    // Autoplay toutes les 3s
     const interval = setInterval(() => scroll('right'), 3000);
 
     return () => {
@@ -73,7 +68,7 @@ export default function InfiniteTeamCarouselAutoplay() {
 
   return (
     <section
-      className={`py-20 px-4 sm:px-8 md:px-16 relative transition-colors duration-500 ${
+      className={`py-20 sm:py-28 px-4 sm:px-8 md:px-16 relative transition-colors duration-500 ${
         isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
       }`}
     >
@@ -102,7 +97,7 @@ export default function InfiniteTeamCarouselAutoplay() {
         <ChevronRight size={24} />
       </button>
 
-      {/* Carrousel */}
+      {/* Carousel */}
       <div
         ref={carouselRef}
         className="flex overflow-x-auto space-x-6 scrollbar-hide snap-x snap-mandatory scroll-smooth"
@@ -118,11 +113,7 @@ export default function InfiniteTeamCarouselAutoplay() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: (index % team.length) * 0.2 }}
           >
-            <img
-              src={member.avatar}
-              alt={member.name}
-              className="w-24 h-24 rounded-full mb-4 object-cover"
-            />
+            <Image src={member.avatar} alt={member.name} width={96} height={96} className="rounded-full mb-4 object-cover" />
             <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-black'}`}>{member.name}</h3>
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{member.role}</p>
           </motion.div>
@@ -130,7 +121,7 @@ export default function InfiniteTeamCarouselAutoplay() {
       </div>
 
       {/* Dots indicator */}
-      <div className="flex justify-center mt-6 space-x-2">
+      <div className="flex justify-center mt-8 space-x-2">
         {team.map((_, index) => (
           <button
             key={index}
@@ -146,6 +137,9 @@ export default function InfiniteTeamCarouselAutoplay() {
           />
         ))}
       </div>
+
+      {/* Espace pour section suivante */}
+      <div className="mt-28" />
     </section>
   );
 }

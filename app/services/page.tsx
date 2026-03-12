@@ -1,10 +1,12 @@
+// app/services/page.tsx
 import type { Metadata } from "next";
-import Reveal from "@/components/ui/Reveal";
 
 import ServicesHero from "@/components/services/ServicesHero";
 import ServicesList from "@/components/services/ServicesList";
 import ProcessSection from "@/components/services/ProcessSection";
+import ServicesCapabilities from "@/components/services/ServicesCapabilities";
 import TechSection from "@/components/services/TechSection";
+import AboutPreview from "@/components/services/AboutPreview";
 import CTASection from "@/components/services/CTASection";
 
 export const metadata: Metadata = {
@@ -36,23 +38,24 @@ export default function ServicesPage() {
   return (
     <main className="relative flex flex-col w-full overflow-x-hidden">
       {/* HERO */}
-
       <ServicesHero />
 
       {/* SERVICES */}
-
       <ServicesList />
 
       {/* PROCESS ENGINEERING */}
-
       <ProcessSection />
 
-      {/* TECHNOLOGIES */}
+      {/* CAPABILITIES */}
+      <ServicesCapabilities />
 
+      {/* TECHNOLOGIES */}
       <TechSection />
 
-      {/* CALL TO ACTION */}
+      {/* ABOUT / TIMELINE */}
+      <AboutPreview />
 
+      {/* CALL TO ACTION */}
       <CTASection />
     </main>
   );

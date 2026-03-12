@@ -6,6 +6,8 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "next-themes";
+import { CartProvider } from "@/context/CartContext";
+import { CartToastProvider } from "@/context/CartToastContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,13 +56,17 @@ export default function RootLayout({
       >
         {/* ThemeProvider doit être à l’intérieur du body */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header />
+          <CartProvider>
+            <Header />
 
-          <main >
-            <LanguageProvider>{children}</LanguageProvider>
-          </main>
+            <main>
+              <LanguageProvider>
+                <CartToastProvider>{children}</CartToastProvider>
+              </LanguageProvider>
+            </main>
 
-          <Footer />
+            <Footer />
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>

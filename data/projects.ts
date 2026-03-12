@@ -8,7 +8,7 @@ export const projectsData: Project[] = [
     category: "Ascenseurs",
     images: [
       "/images/projects/elevator.webp",
-      "/images/projects/métallique.webp",
+      "/images/projects/OIP2.webp",
     ],
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -71,7 +71,7 @@ export const projectsData: Project[] = [
     id: 7,
     title: "Geordie Cool",
     category: "Mobile / Réseau social",
-    images: ["/images/geordie1.png", "/images/geordie2.png"],
+    images: ["/images/projects/OIP.webp"],
     description: "Application mobile connectant la communauté locale de Goma.",
     technologies: ["React Native", "Node.js", "PostgreSQL"],
     result: "5000+ utilisateurs actifs en 3 mois",
@@ -81,7 +81,7 @@ export const projectsData: Project[] = [
     id: 8,
     title: "Smart Wi-Fi Goma",
     category: "Réseau / Infrastructure",
-    images: ["/images/wifi1.png", "/images/wifi2.png"],
+    images: ["/images/projects/OIP1.webp"],
     description: "Réseau Wi-Fi longue portée couvrant 5 km².",
     technologies: ["Starlink", "Routeurs Mesh", "Node.js"],
     result: "50 utilisateurs simultanés",

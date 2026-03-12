@@ -8,8 +8,10 @@ export default function Footer() {
   const isDark = theme === "dark";
 
   return (
-    <footer className={`relative transition-colors duration-500 ${isDark ? "bg-black text-white" : "bg-gray-50 text-gray-900"}`}>
-
+    <footer
+  suppressHydrationWarning
+  className={`relative transition-colors duration-500 ${isDark ? "bg-black text-white" : "bg-gray-50 text-gray-900"}`}
+>
       {/* GRADIENT SUBTIL */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-blue-600/20 to-transparent dark:from-blue-500/20 dark:to-transparent"></div>

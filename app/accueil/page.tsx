@@ -9,6 +9,7 @@ import TeamSection from "@/components/sections/TeamSection";
 import BlogSection from "@/components/sections/BlogSection";
 import FAQSection from "@/components/sections/FAQ";
 import CTAContact from "@/components/sections/CTA";
+import WhyChooseUs from "@/components/sections/WhyChooseUs";
 
 export const metadata: Metadata = {
   title: "Accueil Engineering",
@@ -48,7 +49,8 @@ export default function AcceuilPage() {
       
         <ProjectsSection />
       
-      
+      <WhyChooseUs />
+
         <Testimonials />
       
       
