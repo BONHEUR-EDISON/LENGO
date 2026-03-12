@@ -21,6 +21,14 @@ export async function generateStaticParams() {
   return files.map((file) => ({ slug: file.replace(/\.mdx$/, "") }));
 }
 
+interface PostSummary {
+  slug: string;
+  title: string;
+  date: string;
+  image: string;
+  summary?: string;
+}
+
 export default async function BlogDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
@@ -42,25 +50,27 @@ export default async function BlogDetail({ params }: { params: Promise<{ slug: s
   const otherPosts = (
     await Promise.all(
       files.map(async (file) => {
-        if (file.replace(/\.mdx$/, "") === slug) return null;
+        const postSlug = file.replace(/\.mdx$/, "");
+        if (postSlug === slug) return null;
+
         const fContent = await fs.readFile(path.join(postsDirectory, file), "utf-8");
         const { data } = matter(fContent);
         return {
-          slug: file.replace(/\.mdx$/, ""),
+          slug: postSlug,
           title: data.title,
           date: data.date,
           image: data.image,
           summary: data.summary,
-        };
+        } as PostSummary;
       })
     )
-  ).filter(Boolean);
+  ).filter((p): p is PostSummary => p !== null); // <-- Type guard ici
 
   return (
     <>
       <SEO title={data.title} description={data.summary} image={data.image} />
       <Header />
-      <main className="max-w-7xl mx-auto px-6 py-16 flex gap-8">
+      <main className="max-w-7xl mx-auto px-6 py-16 flex flex-col md:flex-row gap-8">
         {/* LeftBar scrollable */}
         <LeftBar posts={otherPosts} />
 
