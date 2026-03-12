@@ -7,7 +7,7 @@
 6 silly config load:file:C:\Users\Glo'S\AppData\Roaming\npm\etc\npmrc
 7 verbose title npm run dev
 8 verbose argv "run" "dev"
-9 verbose logfile logs-max:10 dir:C:\xampp\htdocs\lengo-web1\npm-cache\_logs\2026-03-12T12_51_25_144Z-
-10 verbose logfile C:\xampp\htdocs\lengo-web1\npm-cache\_logs\2026-03-12T12_51_25_144Z-debug-0.log
+9 verbose logfile logs-max:10 dir:C:\xampp\htdocs\lengo-web1\npm-cache\_logs\2026-03-12T19_42_40_469Z-
+10 verbose logfile C:\xampp\htdocs\lengo-web1\npm-cache\_logs\2026-03-12T19_42_40_469Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files

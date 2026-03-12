@@ -1,4 +1,4 @@
-"use client";
+// Header.tsx
 import Link from "next/link";
 
 export default function Header() {
@@ -8,8 +8,12 @@ export default function Header() {
         LENGO BLOG
       </Link>
       <nav className="space-x-4">
-        <Link href="/blog" className="text-gray-700 dark:text-gray-300 hover:text-blue-600">Blog</Link>
-        <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-blue-600">À propos</Link>
+        <Link href="/blog" className="text-gray-700 dark:text-gray-300 hover:text-blue-600">
+          Blog
+        </Link>
+        <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-blue-600">
+          À propos
+        </Link>
       </nav>
     </header>
   );

@@ -1,4 +1,4 @@
-"use client";
+//ue client";
 
 export default function Newsletter() {
   return (
