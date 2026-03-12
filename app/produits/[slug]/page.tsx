@@ -20,7 +20,7 @@ export default function ProductPage() {
   const params = useParams();
   const slug = params?.slug as string | undefined;
 
-  const { addToCart, cart } = useCart();
+  const { addToCart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const product: Product | undefined = useMemo(() => {
@@ -30,7 +30,7 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="p-10 text-center text-xl text-gray-700 " >
+      <div className="p-10 text-center text-xl text-gray-700 dark:text-gray-300">
         Produit introuvable
       </div>
     );
@@ -67,6 +67,7 @@ export default function ProductPage() {
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       <main className="max-w-7xl mx-auto px-6 py-24 space-y-12">
+
         {/* Breadcrumb */}
         <Breadcrumb productName={product.name} />
 
