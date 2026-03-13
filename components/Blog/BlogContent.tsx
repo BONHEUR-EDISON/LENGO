@@ -1,11 +1,9 @@
-// components/Blog/BlogContent.tsx
 import { MDXRemote } from "next-mdx-remote/rsc";
-import type { MDXRemoteProps } from "next-mdx-remote/rsc";
 
-interface Props {
-  mdxSource: MDXRemoteProps;
+interface BlogContentProps {
+  source: string;
 }
 
-export default function BlogContent({ mdxSource }: Props) {
-  return <MDXRemote {...mdxSource} />;
+export default function BlogContent({ source }: BlogContentProps) {
+  return <MDXRemote source={source} />;
 }

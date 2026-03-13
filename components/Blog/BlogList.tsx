@@ -1,19 +1,30 @@
-"use client";
-
-import { useState } from "react";
-import { blogPosts, BlogPost } from "@/data/blog";
+'use client';
+import React, { useState, useEffect } from "react";
 import BlogCard from "./BlogCard";
+import { BlogPost } from "@/data/blog";
 import { useInView } from "react-intersection-observer";
 
-export default function BlogList() {
-  const [visiblePosts, setVisiblePosts] = useState<BlogPost[]>(blogPosts.slice(0, 2));
+interface BlogListProps {
+  posts: BlogPost[];
+}
+
+export default function BlogList({ posts }: BlogListProps) {
+  const [visiblePosts, setVisiblePosts] = useState<BlogPost[]>(posts.slice(0, 2));
   const { ref, inView } = useInView({ threshold: 0.5 });
 
-  if (inView && visiblePosts.length < blogPosts.length) {
-    setTimeout(() => {
-      setVisiblePosts(blogPosts.slice(0, visiblePosts.length + 2));
-    }, 500);
-  }
+  useEffect(() => {
+    if (inView && visiblePosts.length < posts.length) {
+      const timeout = setTimeout(() => {
+        setVisiblePosts(posts.slice(0, visiblePosts.length + 2));
+      }, 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [inView, visiblePosts.length, posts]);
+
+  useEffect(() => {
+    // Reset visible posts si le tableau change (filtrage par catégorie)
+    setVisiblePosts(posts.slice(0, 2));
+  }, [posts]);
 
   return (
     <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

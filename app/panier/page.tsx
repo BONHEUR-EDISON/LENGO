@@ -24,13 +24,9 @@ export default function PanierPage() {
   };
 
   const confirmAction = () => {
-    if (modalAction === "delete" && modalItemId !== null) {
-      removeFromCart(modalItemId);
-    } else if (modalAction === "clear") {
-      clearCart();
-    } else if (modalAction === "checkout") {
-      alert("Redirection vers la caisse...");
-    }
+    if (modalAction === "delete" && modalItemId !== null) removeFromCart(modalItemId);
+    else if (modalAction === "clear") clearCart();
+    else if (modalAction === "checkout") alert("Redirection vers la caisse...");
     setModalOpen(false);
     setModalAction(null);
     setModalItemId(null);
@@ -38,13 +34,13 @@ export default function PanierPage() {
 
   if (cart.length === 0)
     return (
-      <div className="container mx-auto text-center">
-        <h1 className={`py-30 pb-6 text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
+      <div className="container mx-auto text-center py-30">
+        <h1 className={`text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
           Votre panier est vide
         </h1>
         <Link
           href="/produits"
-          className="text-blue-600 p-0 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
+          className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
         >
           Voir nos produits
         </Link>
@@ -52,9 +48,9 @@ export default function PanierPage() {
     );
 
   return (
-    <div className="container mx-auto px-4 py-12 space-y-8">
+    <div className="container mx-auto px-4 py-6 space-y-8">
 
-      <h1 className={`text-4xl py-30 font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
+      <h1 className={`text-4xl font-bold pt-24 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
         Votre Panier
       </h1>
 
@@ -66,6 +62,7 @@ export default function PanierPage() {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 50 }}
+              layout
               className={`flex justify-between items-center border rounded p-4 transition-colors ${
                 theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-white"
               }`}
@@ -134,31 +131,43 @@ export default function PanierPage() {
       </div>
 
       {/* MODALE */}
-      {modalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-80 text-center">
-            <p className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              {modalAction === "delete" && "Voulez-vous vraiment supprimer cet article ?"}
-              {modalAction === "clear" && "Voulez-vous vraiment vider le panier ?"}
-              {modalAction === "checkout" && "Voulez-vous passer au paiement ?"}
-            </p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={confirmAction}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-              >
-                Oui
-              </button>
-              <button
-                onClick={() => setModalOpen(false)}
-                className="bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-100 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
-              >
-                Non
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {modalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg w-80 text-center"
+            >
+              <p className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {modalAction === "delete" && "Voulez-vous vraiment supprimer cet article ?"}
+                {modalAction === "clear" && "Voulez-vous vraiment vider le panier ?"}
+                {modalAction === "checkout" && "Voulez-vous passer au paiement ?"}
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={confirmAction}
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                  Oui
+                </button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-100 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
+                >
+                  Non
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

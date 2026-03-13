@@ -1,15 +1,23 @@
-// "use client";
+'use client';
 
-import { useState } from "react";
+import React from "react";
 import { blogPosts } from "@/data/blog";
 import BlogCard from "./BlogCard";
 
-const categories = ["All", "Design", "Innovation", "Technologie"];
+interface CategoryFilterProps {
+  categories: string[];
+  selected: string;
+  onSelect: React.Dispatch<React.SetStateAction<string>>;
+}
 
-export default function CategoryFilter() {
-  const [selected, setSelected] = useState("All");
-
-  const filtered = selected === "All" ? blogPosts : blogPosts.filter(p => p.category === selected);
+export default function CategoryFilter({
+  categories,
+  selected,
+  onSelect,
+}: CategoryFilterProps) {
+  const filtered = selected === "All"
+    ? blogPosts
+    : blogPosts.filter((p) => p.category === selected);
 
   return (
     <section className="mt-12">
@@ -17,7 +25,7 @@ export default function CategoryFilter() {
         {categories.map((cat) => (
           <button
             key={cat}
-            onClick={() => setSelected(cat)}
+            onClick={() => onSelect(cat)}
             className={`px-4 py-2 rounded-full border transition ${
               selected === cat
                 ? "bg-blue-600 text-white border-blue-600"

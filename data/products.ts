@@ -1,4 +1,5 @@
 // data/products.ts
+
 export interface Review {
   author: string;
   rating: number;
@@ -11,19 +12,19 @@ export interface FAQItem {
 }
 
 export interface Product {
-  isNew: boolean;
+  isNew: boolean;      // obligatoire
   id: number;
   name: string;
-  slug: string;           // Ajouté pour navigation et url
+  slug: string;        // pour navigation et URL
   description: string;
   price: number;
   stock: number;
   category?: string;
-  image: string;          // image principale
-  images?: string[];      // galerie d’images
-  features?: string[];    // caractéristiques techniques
-  reviews?: Review[];     // avis clients
-  faqs?: FAQItem[];       // FAQ produit
+  image: string;       // image principale
+  images?: string[];   // galerie d’images
+  features?: string[]; // caractéristiques techniques
+  reviews?: Review[];
+  faqs?: FAQItem[];
 }
 
 export const products: Product[] = [
@@ -54,7 +55,8 @@ export const products: Product[] = [
     faqs: [
       { question: "Le casque est-il compatible PC et Mac ?", answer: "Oui, compatible Windows et macOS." },
       { question: "Peut-on l’utiliser sans fil ?", answer: "Oui, grâce au Bluetooth intégré." }
-    ]
+    ],
+    isNew: true
   },
   {
     id: 2,
@@ -82,7 +84,8 @@ export const products: Product[] = [
     faqs: [
       { question: "Le clavier est-il rétroéclairé ?", answer: "Oui, entièrement RGB avec effets programmables." },
       { question: "Compatible Mac ?", answer: "Oui, mais certaines touches spéciales sont Windows-only." }
-    ]
+    ],
+    isNew: false
   },
   {
     id: 3,
@@ -110,9 +113,9 @@ export const products: Product[] = [
     faqs: [
       { question: "Fonctionne sur Mac ?", answer: "Oui, compatible avec macOS et Windows." },
       { question: "Peut-on régler la sensibilité ?", answer: "Oui, via le bouton DPI ou le logiciel fourni." }
-    ]
+    ],
+    isNew: true
   },
-
   {
     id: 4,
     name: "Webcam HD 1080p",
@@ -125,7 +128,8 @@ export const products: Product[] = [
     images: ["/images/produits/webcam1.jpg","/images/produits/webcam2.jpg"],
     features: ["Résolution 1080p","Micro intégré","Correction automatique de la lumière","Compatible Windows et Mac"],
     reviews: [{ author: "George", rating: 5, comment: "Image nette, très pratique pour les visioconférences." }],
-    faqs: [{ question: "Fonctionne sous Linux ?", answer: "Oui, avec drivers standards UVC." }]
+    faqs: [{ question: "Fonctionne sous Linux ?", answer: "Oui, avec drivers standards UVC." }],
+    isNew: false
   },
   {
     id: 5,
@@ -139,7 +143,8 @@ export const products: Product[] = [
     images: ["/images/produits/enceinte1.jpg","/images/produits/enceinte2.jpg"],
     features: ["Bluetooth 5.0","Autonomie 12h","Son stéréo","Étanche IPX5"],
     reviews: [{ author: "Hanna", rating: 5, comment: "Pratique et puissant pour sa taille." }],
-    faqs: [{ question: "Peut-on l’utiliser en extérieur ?", answer: "Oui, elle est étanche IPX5." }]
+    faqs: [{ question: "Peut-on l’utiliser en extérieur ?", answer: "Oui, elle est étanche IPX5." }],
+    isNew: true
   },
   {
     id: 6,
@@ -153,6 +158,7 @@ export const products: Product[] = [
     images: ["/images/produits/hdd1.jpg","/images/produits/hdd2.jpg"],
     features: ["Capacité 1TB","USB-C et USB 3.0","Portable et léger","Compatible Windows/Mac"],
     reviews: [{ author: "Ian", rating: 4, comment: "Rapide et fiable, parfait pour sauvegardes." }],
-    faqs: [{ question: "Formaté en NTFS ?", answer: "Oui, prêt à l’emploi, peut être reformaté." }]
+    faqs: [{ question: "Formaté en NTFS ?", answer: "Oui, prêt à l’emploi, peut être reformaté." }],
+    isNew: false
   }
 ];

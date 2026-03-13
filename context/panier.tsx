@@ -1,5 +1,5 @@
 // pages/panier.tsx
-import { useCart } from "@components/context/CartContext";
+import { useCart } from "./CartContext";
 import Link from "next/link";
 
 export default function PanierPage() {

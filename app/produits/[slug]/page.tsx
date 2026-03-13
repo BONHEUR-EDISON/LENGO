@@ -23,6 +23,7 @@ export default function ProductPage() {
   const { addToCart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // Recherche du produit en toute sécurité
   const product: Product | undefined = useMemo(() => {
     if (!slug) return undefined;
     return products.find((p) => p.slug === slug);
@@ -36,24 +37,36 @@ export default function ProductPage() {
     );
   }
 
-  // Toujours un tableau d'images avec fallback
-  const images = product.images && product.images.length > 0
+  // Fallback pour les images
+  const images = Array.isArray(product.images) && product.images.length > 0
     ? product.images
     : ["/images/produits/fallback.png"];
 
+  // Fallback pour la description
+  const description = product.description ?? "";
+
+  // Fallback pour le category
+  const category = product.category ?? "";
+
   // Gestion ajout au panier
   const handleAddToCart = () => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image || "/images/produits/fallback.png",
-      quantity: 1,
-    });
+    addToCart(
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image ?? "/images/produits/fallback.png",
+      },
+      1
+    );
 
     toast.success(`${product.name} ajouté au panier !`, {
       position: "top-right",
-      style: { borderRadius: "10px", background: "#1a1a1a", color: "#fff" },
+      style: {
+        borderRadius: "10px",
+        background: "#1a1a1a",
+        color: "#fff",
+      },
     });
 
     setIsCartOpen(true);
@@ -71,34 +84,40 @@ export default function ProductPage() {
         {/* Breadcrumb */}
         <Breadcrumb productName={product.name} />
 
-        {/* Section principale: Galerie + Infos */}
+        {/* Section principale */}
         <section className="grid md:grid-cols-2 gap-12">
           <ProductGallery images={images} />
+
           <ProductInfo
             name={product.name}
             price={product.price}
-            stock={product.stock}
-            category={product.category}
+            stock={product.stock ?? 0}
+            category={category}
             onAddToCart={handleAddToCart}
           />
         </section>
 
         {/* Description */}
-        <ProductDescription description={product.description} />
+        <ProductDescription description={description} />
 
         {/* Caractéristiques */}
-        {product.features?.length > 0 && (
+        {(Array.isArray(product.features) && product.features.length > 0) && (
           <ProductFeatures features={product.features} />
         )}
 
         {/* FAQ */}
-        {product.faqs?.length > 0 && <FAQ faqs={product.faqs} />}
+        {(Array.isArray(product.faqs) && product.faqs.length > 0) && (
+          <FAQ faqs={product.faqs} />
+        )}
 
-        {/* Avis clients */}
-        {product.reviews?.length > 0 && <Reviews reviews={product.reviews} />}
+        {/* Avis */}
+        {(Array.isArray(product.reviews) && product.reviews.length > 0) && (
+          <Reviews reviews={product.reviews} />
+        )}
 
         {/* Produits similaires */}
         <RelatedProducts currentId={product.id} />
+
       </main>
     </>
   );
