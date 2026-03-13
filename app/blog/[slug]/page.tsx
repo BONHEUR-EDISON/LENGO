@@ -57,9 +57,10 @@ export default async function BlogDetail({ params }: BlogDetailProps) {
         description={data.summary}
         image={data.image}
       />
-
-      <Header />
-
+<div className="pt-24">
+<Header />
+</div>
+      
       <main className="max-w-7xl mx-auto px-6 py-16 flex gap-8">
 
         <LeftBar posts={otherPosts} featuredSlug={slug} />
