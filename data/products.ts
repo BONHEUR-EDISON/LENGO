@@ -1,4 +1,4 @@
-// data/products.ts
+// /data/products.ts
 
 export interface Review {
   author: string;
@@ -27,6 +27,7 @@ export interface Product {
   faqs?: FAQItem[];
 }
 
+// Produits existants
 export const products: Product[] = [
   {
     id: 1,
@@ -162,3 +163,93 @@ export const products: Product[] = [
     isNew: false
   }
 ];
+
+// Génération de 500 produits supplémentaires
+const brands = [
+  "Apple","Samsung","Sony","Logitech","Corsair",
+  "Razer","Asus","Dell","HP","Lenovo",
+  "Xiaomi","Bose","JBL","Anker","TP-Link"
+];
+
+const categories = [
+  "Smartphones",
+  "Ordinateurs",
+  "Audio",
+  "Gaming",
+  "Stockage",
+  "Réseau",
+  "Accessoires",
+  "Domotique",
+  "Moniteurs",
+  "Tablettes"
+];
+
+const productImages = [
+  "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
+  "https://images.unsplash.com/photo-1587202372775-e229f172b9d7",
+  "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
+  "https://images.unsplash.com/photo-1585386959984-a4155224a1ad",
+  "https://images.unsplash.com/photo-1518444028785-8c0f7e37f89f",
+  "https://images.unsplash.com/photo-1606904825846-647eb07f5be2"
+];
+
+const productNames = [
+  "Smartphone Pro",
+  "Laptop Ultra",
+  "Casque Bluetooth",
+  "Clavier mécanique",
+  "Souris Gaming",
+  "Routeur WiFi 6",
+  "SSD NVMe",
+  "Écran 4K",
+  "Tablette Pro",
+  "Enceinte Bluetooth"
+];
+
+let nextId = products.length + 1;
+
+for (let i = 0; i < 100; i++) {
+
+  const brand = brands[i % brands.length];
+  const category = categories[i % categories.length];
+  const baseName = productNames[i % productNames.length];
+  const image = productImages[i % productImages.length];
+
+  const name = `${brand} ${baseName} ${i + 1}`;
+  const slug = name.toLowerCase().replace(/\s+/g, "-");
+
+  products.push({
+    id: nextId,
+    name,
+    slug,
+    description:
+      "Produit technologique performant conçu pour offrir qualité, fiabilité et performance.",
+    price: Number((50 + Math.random() * 900).toFixed(2)),
+    stock: Math.floor(Math.random() * 100),
+    category,
+    image,
+    images: [image, image],
+    features: [
+      "Haute performance",
+      "Design moderne",
+      "Compatible multi-plateforme",
+      "Garantie 1 an"
+    ],
+    reviews: [
+      {
+        author: "Client",
+        rating: 4,
+        comment: "Très bon produit."
+      }
+    ],
+    faqs: [
+      {
+        question: "Ce produit est-il garanti ?",
+        answer: "Oui, garantie 1 an."
+      }
+    ],
+    isNew: Math.random() > 0.7
+  });
+
+  nextId++;
+}

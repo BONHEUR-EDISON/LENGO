@@ -1,184 +1,47 @@
-'use client';
+// ./app/produits/[slug]/page.tsx
+import type { Metadata } from "next";
+import { BreadcrumbServer } from "@/components/navigation/BreadcrumbServer";
+import ProduitsPage from "../../components/ProduitsPage";
 
-import { useState, useMemo } from "react";
-import { products as allProducts } from "@/data/products";
-import ProductSearch from "@/components/product/ProductSearch";
-import ProductFilter from "@/components/product/ProductFilter";
-import Image from "next/image";
-import Link from "next/link";
-import { useCart } from "@/context/CartContext";
-import { useCartToast } from "@/context/CartToastContext";
+export const metadata: Metadata = {
+  title: "Produits | Lengo Engineering",
+  description:
+    "Solutions d’ingénierie avancée : construction métallique, automatisation industrielle, ascenseurs intelligents, domotique et technologies pour infrastructures modernes.",
+  keywords: [
+    "engineering",
+    "construction métallique",
+    "automatisation industrielle",
+    "smart elevators",
+    "domotique",
+    "industrial engineering",
+    "smart infrastructure",
+  ],
+  metadataBase: new URL("https://lengo-engineering.vercel.app"),
+  openGraph: {
+    title: "Produits | Lengo Engineering",
+    description:
+      "Découvrez nos solutions d’ingénierie pour les infrastructures modernes et industrielles.",
+    type: "website",
+  },
+  robots: "index, follow",
+  alternates: {
+    canonical: "https://lengo-engineering.vercel.app/produits",
+  },
+};
 
-type SortOption = "default" | "price-asc" | "price-desc" | "name-asc" | "name-desc";
-
-export default function ProduitsPage() {
-  const { addToCart } = useCart();
-  const { showToast } = useCartToast();
-
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-  const [priceFilter, setPriceFilter] = useState<[number, number] | null>(null);
-  const [sort, setSort] = useState<SortOption>("default");
-
-  // ✅ Fallback helper
-  const safeString = (value?: string): string => value ?? "";
-  const safeNumber = (value?: number): number => value ?? 0;
-  const safeArray = <T,>(arr?: T[]): T[] => Array.isArray(arr) ? arr : [];
-
-  const handleAddToCart = (product: typeof allProducts[0]) => {
-    addToCart({
-      id: product.id,
-      name: safeString(product.name),
-      price: safeNumber(product.price),
-      image: safeString(product.image) || "/images/produits/fallback.png",
-    });
-    showToast({ id: product.id, name: safeString(product.name) });
-  };
-
-  const filteredProducts = useMemo(() => {
-    let filtered = allProducts;
-
-    if (search.trim() !== "") {
-      filtered = filtered.filter(
-        (p) =>
-          safeString(p.name).toLowerCase().includes(search.toLowerCase()) ||
-          safeString(p.description).toLowerCase().includes(search.toLowerCase())
-      );
-    }
-
-    if (categoryFilter) {
-      filtered = filtered.filter((p) => safeString(p.category) === categoryFilter);
-    }
-
-    if (priceFilter) {
-      filtered = filtered.filter(
-        (p) => safeNumber(p.price) >= priceFilter[0] && safeNumber(p.price) <= priceFilter[1]
-      );
-    }
-
-    if (sort === "price-asc") filtered = filtered.sort((a, b) => safeNumber(a.price) - safeNumber(b.price));
-    else if (sort === "price-desc") filtered = filtered.sort((a, b) => safeNumber(b.price) - safeNumber(a.price));
-    else if (sort === "name-asc") filtered = filtered.sort((a, b) => safeString(a.name).localeCompare(safeString(b.name)));
-    else if (sort === "name-desc") filtered = filtered.sort((a, b) => safeString(b.name).localeCompare(safeString(a.name)));
-
-    return filtered;
-  }, [search, categoryFilter, priceFilter, sort]);
-
-  // Catégories uniques sécurisées
-  const categories: string[] = Array.from(
-    new Set(safeArray(allProducts.map((p) => p.category)).filter((c): c is string => !!c))
-  );
+export default async function ProduitsPageWrapper() {
+  // Exemple : pathSegments potentiellement undefined
+  const rawSegments = ["produits"]; // ici tu peux ajouter product?.category ou autre
+  // ⚡ Filtrer les undefined pour obtenir string[]
+  const pathSegments: string[] = rawSegments.filter((seg): seg is string => !!seg);
 
   return (
-    <main className="max-w-7xl mx-auto px-6 py-30">
-      {/* Header */}
-      <div className="mb-12 text-center md:text-left">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Nos Produits</h1>
-        <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl">
-          Explorez notre catalogue et trouvez votre produit idéal.
-        </p>
-      </div>
+    <main>
+      {/* Breadcrumb côté serveur */}
+      <BreadcrumbServer pathSegments={pathSegments} />
 
-      {/* Filtres et recherche */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
-        <ProductSearch value={search} onChange={setSearch} />
-        <div className="flex gap-4 items-center flex-wrap">
-          <ProductFilter
-            categories={categories}
-            selectedCategory={categoryFilter}
-            onCategoryChange={setCategoryFilter}
-            onPriceChange={setPriceFilter}
-          />
-
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortOption)}
-            className="border rounded px-3 py-2 text-gray-700 dark:text-gray-300 dark:bg-gray-800 transition-colors"
-          >
-            <option value="default">Trier par défaut</option>
-            <option value="price-asc">Prix croissant</option>
-            <option value="price-desc">Prix décroissant</option>
-            <option value="name-asc">Nom A→Z</option>
-            <option value="name-desc">Nom Z→A</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Grid produits */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {filteredProducts.length === 0 ? (
-          <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
-            Aucun produit trouvé.
-          </p>
-        ) : (
-          filteredProducts.map((product) => {
-            const name = safeString(product.name);
-            const description = safeString(product.description);
-            const image = safeString(product.image) || "/images/produits/fallback.png";
-            const price = safeNumber(product.price);
-            const stock = safeNumber(product.stock);
-
-            return (
-              <div
-                key={product.id}
-                className="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-transform hover:scale-105"
-              >
-                {/* Badge */}
-                {stock === 0 && (
-                  <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
-                    Rupture
-                  </span>
-                )}
-                {product.isNew && stock > 0 && (
-                  <span className="absolute top-3 left-3 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
-                    Nouveau
-                  </span>
-                )}
-
-                {/* Image */}
-                <Link href={`/produits/${product.slug}`} prefetch>
-                  <div className="relative h-64 md:h-60 w-full overflow-hidden">
-                    <Image
-                      src={image}
-                      alt={name}
-                      fill
-                      sizes="(max-width:768px) 100vw, 25vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => (e.currentTarget.src = "/images/produits/fallback.png")}
-                    />
-                  </div>
-                </Link>
-
-                {/* Infos produit */}
-                <div className="p-4 flex flex-col justify-between h-48">
-                  <div>
-                    <h2 className="font-semibold text-lg text-gray-900 dark:text-white">{name}</h2>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                      {description.slice(0, 60)}...
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-3">
-                    <p className="font-bold text-gray-900 dark:text-white">${price.toFixed(2)}</p>
-
-                    <button
-                      disabled={stock === 0}
-                      onClick={() => handleAddToCart(product)}
-                      className={`px-4 py-2 rounded-lg font-semibold transition ${
-                        stock === 0
-                          ? "bg-gray-400 cursor-not-allowed text-white"
-                          : "bg-black hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                      }`}
-                    >
-                      Ajouter
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
+      {/* Page Produits */}
+      <ProduitsPage />
     </main>
   );
 }

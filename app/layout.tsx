@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "next-themes";
 import { CartProvider } from "@/context/CartContext";
 import { CartToastProvider } from "@/context/CartToastContext";
+import ReadingProgress from "@/components/Blog/ReadingProgress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
   title: "Lengo Engineering",
   description:
     "Solutions d’ingénierie avancée : construction métallique, automatisation industrielle, ascenseurs intelligents, domotique et technologies pour infrastructures modernes.",
+
   keywords: [
     "engineering",
     "construction métallique",
@@ -32,15 +34,40 @@ export const metadata: Metadata = {
     "industrial engineering",
     "smart infrastructure",
   ],
+
+  verification: {
+    google: "googlec57ebe5de93e0666.html",
+  },
+
+  robots: "index, follow",
+
+  alternates: {
+    canonical: "https://lengo-engineeringg.vercel.app",
+  },
+
   openGraph: {
     title: "Lengo Engineering",
     description:
       "Découvrez nos solutions d’ingénierie pour les infrastructures modernes et industrielles.",
+    url: "https://lengo-engineeringg.vercel.app",
+    siteName: "Lengo Engineering",
     type: "website",
+    locale: "fr_FR",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Lengo Engineering",
+      },
+    ],
   },
-  robots: "index, follow",
-  alternates: {
-    canonical: "https://lengo-engineering.vercel.app/",
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Lengo Engineering",
+    description: "Solutions d’ingénierie pour infrastructures modernes.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -55,18 +82,28 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black transition-colors duration-500`}
       >
         {/* ThemeProvider doit être à l’intérieur du body */}
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <CartProvider>
-            <Header />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark" // forcer mode sombre
+          enableSystem={false} // ignorer préférence système
+        >
+          <LanguageProvider>
+            <CartProvider>
+              <CartToastProvider>
+                {/* Barre de progression lecture */}
+                <ReadingProgress />
 
-            <main>
-              <LanguageProvider>
-                <CartToastProvider>{children}</CartToastProvider>
-              </LanguageProvider>
-            </main>
+                {/* Header principal */}
+                <Header />
 
-            <Footer />
-          </CartProvider>
+                {/* Contenu principal */}
+                <main className="min-h-[80vh]">{children}</main>
+
+                {/* Footer */}
+                <Footer />
+              </CartToastProvider>
+            </CartProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

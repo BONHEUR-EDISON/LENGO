@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue } from "framer-motion";
@@ -24,21 +24,15 @@ export default function Header() {
   const { cart } = useCart();
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Scroll + initialisation
   useEffect(() => {
     setMounted(true);
     const savedLocale = localStorage.getItem("locale");
     if (savedLocale) setLocale(savedLocale);
 
-    const handleScroll = () => setBlur(window.scrollY > 30);
+    const handleScroll = () => setBlur(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const changeLocale = (newLocale: string) => {
-    setLocale(newLocale);
-    localStorage.setItem("locale", newLocale);
-  };
 
   const links = [
     { name: locale === "fr" ? "Accueil" : "Home", href: "/" },
@@ -72,18 +66,18 @@ export default function Header() {
         />
       </div>
 
-      {/* Header Container avec fond bleu iOS au top et transparent au scroll */}
+      {/* Header Container */}
       <div
-        className={`relative transition-all duration-500 backdrop-blur-xl ${
+        className={`relative transition-all duration-300 backdrop-blur-xl ${
           blur
-            ? "bg-transparent border-b border-white/20 dark:border-white/10"
+            ? "bg-white/10 dark:bg-black/20 border-b border-white/20 dark:border-white/10"
             : "bg-blue-500/80 border-b border-blue-300/50"
         }`}
       >
-        <div className="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between perspective-[1200px]">
+        <div className="max-w-7xl mx-auto h-20 px-4 sm:px-6 flex items-center justify-between">
 
           {/* LOGO */}
-          <Link href="/" aria-label="Accueil" className="flex items-center gap-3 ml-[-10px]">
+          <Link href="/" aria-label="Accueil" className="flex items-center gap-3 flex-shrink-0">
             <motion.div
               whileHover={{ rotate: 15, scale: 1.1 }}
               className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-lg"
@@ -104,12 +98,12 @@ export default function Header() {
           </Link>
 
           {/* NAV DESKTOP */}
-          <div className="hidden md:flex items-center gap-6 relative">
+          <div className="hidden md:flex items-center gap-6">
             {links.map((link) => (
               <Magnetic key={link.name}>
                 <Link
                   href={link.href}
-                  className="relative font-medium group text-white"
+                  className="relative font-medium group text-white whitespace-nowrap"
                 >
                   {link.name}
                   <motion.span
@@ -122,7 +116,7 @@ export default function Header() {
               </Magnetic>
             ))}
 
-            {/* Panier Icon */}
+            {/* Cart Icon Desktop */}
             <Link href="/panier" className="relative ml-4 text-white">
               <ShoppingCart size={24} />
               {totalItems > 0 && (
@@ -143,10 +137,21 @@ export default function Header() {
             )}
           </div>
 
-          {/* MOBILE MENU BUTTON */}
-          <button className="md:hidden" onClick={() => setOpen(!open)} aria-label="Menu mobile">
-            {open ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          {/* MOBILE MENU BUTTON + Cart */}
+          <div className="flex md:hidden items-center gap-3">
+            <Link href="/panier" className="relative flex-shrink-0">
+              <ShoppingCart size={24} />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+
+            <button onClick={() => setOpen(!open)} aria-label="Menu mobile">
+              {open ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -157,9 +162,9 @@ export default function Header() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
-            className="md:hidden backdrop-blur-xl bg-blue-500/90 border-b border-blue-300/50 shadow-lg"
+            className="md:hidden backdrop-blur-xl bg-blue-500/95 border-b border-blue-300/50 shadow-lg w-full"
           >
-            <div className="flex flex-col gap-6 p-8">
+            <div className="flex flex-col gap-6 p-6">
               {links.map((link) => (
                 <Link
                   key={link.name}
@@ -171,27 +176,17 @@ export default function Header() {
                 </Link>
               ))}
 
-              {/* Mobile Panier + Theme */}
-              <div className="flex gap-4 mt-4 justify-center">
-                <Link href="/panier" className="relative">
-                  <ShoppingCart size={24} />
-                  {totalItems > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                      {totalItems}
-                    </span>
-                  )}
-                </Link>
-
-                {mounted && (
+              {/* Mobile Theme toggle */}
+              {mounted && (
+                <div className="flex justify-center mt-4">
                   <button
                     onClick={() => setTheme(isDark ? "light" : "dark")}
                     className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition"
                   >
                     {isDark ? <Sun size={18} /> : <Moon size={18} />}
                   </button>
-                )}
-              </div>
-
+                </div>
+              )}
             </div>
           </motion.div>
         )}

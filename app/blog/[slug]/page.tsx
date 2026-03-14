@@ -4,12 +4,13 @@ import matter from "gray-matter";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
-import Header from "@/components/Blog/Header";
-import Footer from "@/components/Blog/Footer";
+//import Header from "@/components/Blog/Header";
+//import Footer from "@/components/Blog/Footer";
 import LeftBar from "@/components/Blog/LeftBar";
 import TableOfContents from "@/components/Blog/TableOfContents";
 import BlogContent from "@/components/Blog/BlogContent";
 import SEO from "@/components/Blog/SEO";
+import { BreadcrumbServer } from "@/components/navigation/Breadcrumb";
 
 import { readingTime } from "@/lib/readingTime";
 import { getAllPosts, BlogPost } from "@/lib/getAllPosts";
@@ -50,20 +51,30 @@ export default async function BlogDetail({ params }: BlogDetailProps) {
 
   const otherPosts: BlogPost[] = posts.filter((p) => p.slug !== slug);
 
+  // ✅ Construction des segments pour le breadcrumb
+  const pathSegments = ["blog", slug];
+
   return (
     <>
+    
       <SEO
         title={data.title}
         description={data.summary}
         image={data.image}
       />
-<div className="pt-24">
-<Header />
-</div>
-      
-      <main className="max-w-7xl mx-auto px-6 py-16 flex gap-8">
+       {/*<div className="pt-24">
+        <Header />
+      </div>*/}
+      {/* Breadcrumb côté serveur */}
+        <div className="flex-1 mb-6 pl-40 pt-24 pb-0">
+          <BreadcrumbServer pathSegments={pathSegments} />
+        </div>
 
+      <main className="max-w-7xl mx-auto px-2 py-6 flex gap-8">
+ 
         <LeftBar posts={otherPosts} featuredSlug={slug} />
+
+       
 
         <div className="flex-1">
 
@@ -101,7 +112,7 @@ export default async function BlogDetail({ params }: BlogDetailProps) {
 
             <TableOfContents mdxContent={content} scrollSpy={true} />
 
-            <article className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 flex-1">
+           <article className="prose prose-lg dark:prose-invert max-w-none text-gray-900 dark:text-gray-300 flex-1">
               <BlogContent source={content} />
             </article>
 
@@ -116,8 +127,6 @@ export default async function BlogDetail({ params }: BlogDetailProps) {
 
         </div>
       </main>
-
-      <Footer />
     </>
   );
 }

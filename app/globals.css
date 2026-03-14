@@ -1,23 +1,146 @@
 @import "tailwindcss";
 
-/* variables */
+/* =====================================================
+   DESIGN SYSTEM VARIABLES
+   ===================================================== */
+
 :root {
+  /* Base */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1818;
+
+  /* Surfaces */
+  --surface: #ffffff;
+  --surface-elevated: #f9fafb;
+  --card: #ffffff;
+
+  /* Borders */
+  --border: #e5e7eb;
+
+  /* Primary palette */
+  --primary: #2563eb;
+  --accent: #3b82f6;
+
+  /* Secondary */
+  --secondary: #1f2937;
+
+  /* Text */
+  --muted: #6b7280;
+
+  /* Status colors */
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+
+  /* Focus ring */
+  --ring: #3b82f6;
+
+  /* Radius */
+  --radius: 0.75rem;
 }
 
-/* dark mode contrôlé par next-themes */
-.dark {
-  --background: #0a0a0a;
+/* =====================================================
+   DARK MODE
+   ===================================================== */
+
+html.dark {
+  --background: #111827;
   --foreground: #ededed;
+
+  --surface: #0f0f0f;
+  --surface-elevated: #161616;
+  --card: #111827;
+
+  --border: #374151;
+
+  --primary: #3b82f6;
+  --accent: #60a5fa;
+
+  --secondary: #111827;
+
+  --muted: #9ca3af;
+
+  --success: #22c55e;
+  --warning: #fbbf24;
+  --danger: #ef4444;
+
+  --ring: #60a5fa;
 }
+
+/* =====================================================
+   BASE STYLES
+   ===================================================== */
 
 body {
   background: var(--background);
   color: var(--foreground);
+  text-rendering: optimizeLegibility;
+  font-synthesis-weight: none;
 }
 
-/* scrollbar hide */
+/* =====================================================
+   UI COMPONENT HELPERS
+   ===================================================== */
+
+/* Card */
+.ui-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* Elevated surface */
+.ui-surface {
+  background: var(--surface-elevated);
+  border-radius: var(--radius);
+}
+
+/* Primary button */
+.ui-button-primary {
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius);
+}
+
+/* Secondary button */
+.ui-button-secondary {
+  background: var(--secondary);
+  color: white;
+  border-radius: var(--radius);
+}
+
+/* Muted text */
+.ui-muted {
+  color: var(--muted);
+}
+
+/* Status helpers */
+
+.ui-success {
+  color: var(--success);
+}
+
+.ui-warning {
+  color: var(--warning);
+}
+
+.ui-danger {
+  color: var(--danger);
+}
+
+/* =====================================================
+   FOCUS RING
+   ===================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* =====================================================
+   SCROLLBAR
+   ===================================================== */
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -27,12 +150,24 @@ body {
   scrollbar-width: none;
 }
 
+/* =====================================================
+   RESPONSIVE HELPERS
+   ===================================================== */
+
 @media (min-width: 768px) {
   .flex > div {
-    min-width: calc(33.333% - 2rem); /* 3 colonnes avec gap */
+    min-width: calc(33.333% - 2rem);
   }
 }
-.opacity-0 { opacity: 0; }
-.opacity-100 { opacity: 1; }
-.-translate-y-4 { transform: translateY(-1rem); }
-.translate-y-0 { transform: translateY(0); }
+
+/* =====================================================
+   GLOBAL TRANSITIONS
+   ===================================================== */
+
+* {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}

@@ -11,73 +11,71 @@ interface ProductGalleryProps {
 export default function ProductGallery({ images }: ProductGalleryProps) {
   const safeImages = images && images.length > 0 ? images : ["/images/produits/fallback.png"];
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [mainImg, setMainImg] = useState(safeImages[0]);
 
-  const prevImage = () => {
-    const newIndex = selectedIndex === 0 ? safeImages.length - 1 : selectedIndex - 1;
-    setSelectedIndex(newIndex);
-    setMainImg(safeImages[newIndex]);
-  };
-
-  const nextImage = () => {
-    const newIndex = selectedIndex === safeImages.length - 1 ? 0 : selectedIndex + 1;
-    setSelectedIndex(newIndex);
-    setMainImg(safeImages[newIndex]);
-  };
-
-  const selectImage = (idx: number) => {
-    setSelectedIndex(idx);
-    setMainImg(safeImages[idx]);
-  };
+  const prevImage = () => setSelectedIndex((selectedIndex - 1 + safeImages.length) % safeImages.length);
+  const nextImage = () => setSelectedIndex((selectedIndex + 1) % safeImages.length);
+  const selectImage = (idx: number) => setSelectedIndex(idx);
 
   return (
-    <div>
-      <div className="relative w-full h-96 mb-4">
+    <div className="space-y-4">
+      {/* Image principale */}
+      <div className="relative w-full h-96 md:h-[500px] rounded-xl overflow-hidden shadow-lg">
         <AnimatePresence initial={false}>
           <motion.div
             key={selectedIndex}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
             className="absolute inset-0"
           >
             <Image
-              src={mainImg}
+              src={safeImages[selectedIndex]}
               alt={`Image produit ${selectedIndex + 1}`}
               fill
-              className="object-contain rounded"
+              className="object-contain"
               onError={(e) => (e.currentTarget.src = "/images/produits/fallback.png")}
             />
           </motion.div>
         </AnimatePresence>
 
+        {/* Flèches navigation */}
         <button
           onClick={prevImage}
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 hover:bg-white transition"
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition"
         >
           &#10094;
         </button>
         <button
           onClick={nextImage}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 hover:bg-white transition"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition"
         >
           &#10095;
         </button>
       </div>
 
-      <div className="flex space-x-4 overflow-x-auto">
+      {/* Miniatures */}
+      <div className="flex space-x-3 overflow-x-auto py-1">
         {safeImages.map((img, idx) => (
-          <button key={idx} onClick={() => selectImage(idx)} className="relative">
+          <motion.button
+            key={idx}
+            onClick={() => selectImage(idx)}
+            className="relative flex-shrink-0 rounded-lg border-2 overflow-hidden"
+            initial={{ scale: 1 }}
+            animate={{ scale: idx === selectedIndex ? 1.05 : 1 }}
+            transition={{ duration: 0.2 }}
+          >
             <Image
               src={img}
               alt={`Thumbnail ${idx + 1}`}
               width={80}
               height={80}
-              className={`object-cover rounded border-2 ${idx === selectedIndex ? 'border-blue-600' : 'border-gray-300'}`}
+              className={`object-cover transition-all duration-300 ${
+                idx === selectedIndex ? 'border-blue-600' : 'border-gray-300'
+              }`}
               onError={(e) => (e.currentTarget.src = "/images/produits/fallback.png")}
             />
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>
