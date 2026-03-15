@@ -112,17 +112,17 @@ export default function PanierDetailPage() {
                   paymentMethod==="mobilemoney"?"border-green-400 bg-green-500/10":theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"
                 }`}
               >
-                📱 Mobile Money
+                📱 /💳 Paiement
               </button>
 
-              <button
+             {/* <button
                 onClick={()=>setPaymentMethod("stripe")}
                 className={`w-full p-6 rounded-2xl border ${
                   paymentMethod==="stripe"?"border-blue-400 bg-blue-500/10":theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"
                 }`}
               >
                 💳 Carte bancaire
-              </button>
+              </button> */}
             </div>
 
             <motion.button

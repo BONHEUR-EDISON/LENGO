@@ -1,15 +1,25 @@
 'use client'
 
 import { motion } from "framer-motion"
+import { ReactNode } from "react"
 
-export default function Reveal({ children }: { children: React.ReactNode }) {
+interface RevealProps {
+  children: ReactNode
+  delay?: number
+}
+
+export default function Reveal({ children, delay = 0 }: RevealProps) {
   return (
     <motion.div
-    className="overflow-hidden"
-      initial={{ opacity: 0, y: 60 }}
+      style={{ willChange: "transform, opacity" }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{
+        duration: 0.7,
+        delay,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
     >
       {children}
     </motion.div>

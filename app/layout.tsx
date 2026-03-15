@@ -9,6 +9,7 @@ import { ThemeProvider } from "next-themes";
 import { CartProvider } from "@/context/CartContext";
 import { CartToastProvider } from "@/context/CartToastContext";
 import ReadingProgress from "@/components/Blog/ReadingProgress";
+import InstallApp from "@/components/install-app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,6 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+   manifest: "/manifest.json",
   title: "Lengo Engineering",
   description:
     "Solutions d’ingénierie avancée : construction métallique, automatisation industrielle, ascenseurs intelligents, domotique et technologies pour infrastructures modernes.",
@@ -79,29 +81,32 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
-        className= {`${geistSans.variable} ${geistMono.variable} bg-black text-white antialiased bg-white dark:bg-black transition-colors duration-500`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black text-black dark:text-white overflow-x-hidden`}
       >
-        {/* ThemeProvider doit être à l’intérieur du body */}
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark" // forcer mode sombre
-          enableSystem={false} // ignorer préférence système
-          storageKey="theme"  
+          defaultTheme="dark"
+          enableSystem={false}
         >
           <LanguageProvider>
             <CartProvider>
               <CartToastProvider>
-                {/* Barre de progression lecture */}
+
                 <ReadingProgress />
 
-                {/* Header principal */}
-                <Header />
+                {/* Layout flex vertical */}
+                <div className="flex min-h-screen flex-col">
+<InstallApp />
+                  <Header />
 
-                {/* Contenu principal */}
-                <main className="min-h-[80vh]">{children}</main>
+                  <main className="flex-1 w-full overflow-x-hidden">
+                    {children}
+                  </main>
 
-                {/* Footer */}
-                <Footer />
+                  <Footer />
+
+                </div>
+
               </CartToastProvider>
             </CartProvider>
           </LanguageProvider>

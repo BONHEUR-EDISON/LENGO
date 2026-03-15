@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Loader from "@/components/ui/Loader";
 
@@ -22,47 +22,65 @@ export default function AcceuilClient() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1800);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      <Loader loading={loading} />
+      {/* Loader */}
+      <AnimatePresence mode="wait">
+        {loading && <Loader loading={true} />}
+      </AnimatePresence>
 
+      {/* Page */}
       <motion.main
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: loading ? 0 : 1, y: loading ? 40 : 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative w-full overflow-x-hidden scroll-smooth"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: loading ? 0 : 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative w-full overflow-x-hidden"
       >
+        {/* HERO */}
         <Hero />
 
+        {/* SERVICES */}
         <HeroAndServices />
 
-        <Reveal>
+        {/* PROJECTS */}
+        {/* {/* <Reveal> */}
           <ProjectsSection />
-        </Reveal>
-        <Reveal>
-          <WhyChooseUs />
-        </Reveal>
+         {/*</Reveal>*/}
 
-        <Reveal>
+        {/* WHY CHOOSE US */}
+        {/* <Reveal> */}
+          <WhyChooseUs />
+         {/*</Reveal>*/}
+
+        {/* TESTIMONIALS */}
+        {/* <Reveal> */}
           <Testimonials />
-        </Reveal>
-        <Reveal>
+         {/*</Reveal>*/}
+
+        {/* TEAM */}
+        {/* <Reveal> */}
           <TeamSection />
-        </Reveal>
-        <Reveal>
+         {/*</Reveal>*/}
+
+        {/* BLOG */}
+        {/* <Reveal> */}
           <BlogSection />
-        </Reveal>
-        <Reveal>
+         {/*</Reveal>*/}
+
+        {/* FAQ */}
+        {/* <Reveal> */}
           <FAQSection />
-        </Reveal>
-        <Reveal>
+         {/*</Reveal>*/}
+
+        {/* CTA */}
+        {/* <Reveal> */}
           <CTAContact />
-        </Reveal>
+         {/*</Reveal>*/}
       </motion.main>
     </>
   );

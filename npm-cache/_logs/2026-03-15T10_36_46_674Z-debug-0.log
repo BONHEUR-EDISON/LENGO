@@ -10,3 +10,9 @@
 9 verbose logfile logs-max:10 dir:C:\xampp\htdocs\lengo-web1\npm-cache\_logs\2026-03-15T10_36_46_674Z-
 10 verbose logfile C:\xampp\htdocs\lengo-web1\npm-cache\_logs\2026-03-15T10_36_46_674Z-debug-0.log
 11 silly logfile done cleaning log files
+12 verbose cwd C:\xampp\htdocs\lengo-web1
+13 verbose os Windows_NT 10.0.19042
+14 verbose node v22.14.0
+15 verbose npm  v11.6.0
+16 verbose exit 1
+17 verbose code 1
