@@ -1,14 +1,9 @@
+/* eslint-disable react/no-children-prop */
 // app/page.tsx
 
-import AcceuilPage from "./accueil/page";
-import Reveal from "@/components/ui/Reveal";
+import ServerAccueil  from "./accueil/ServerAccueil";
 
 export default function Home() {
-  return (
-    <div>
-      <main>
-        <AcceuilPage />
-      </main>
-    </div>
-  );
+  
+  return <ServerAccueil children={"AcceuilClient"} />;
 }

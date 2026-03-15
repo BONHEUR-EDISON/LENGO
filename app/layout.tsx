@@ -79,13 +79,14 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black transition-colors duration-500`}
+        className= {`${geistSans.variable} ${geistMono.variable} bg-black text-white antialiased bg-white dark:bg-black transition-colors duration-500`}
       >
         {/* ThemeProvider doit être à l’intérieur du body */}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark" // forcer mode sombre
           enableSystem={false} // ignorer préférence système
+          storageKey="theme"  
         >
           <LanguageProvider>
             <CartProvider>

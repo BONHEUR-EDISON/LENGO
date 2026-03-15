@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { Shield, Users, Zap, TrendingUp } from "lucide-react";
@@ -29,11 +30,18 @@ const benefits = [
 
 export default function WhyChooseUs() {
   const { theme } = useTheme();
-  const isDark = theme === "dark";
+     const [mounted, setMounted] = useState(false);
+   
+     useEffect(() => setMounted(true), []);
+    if (!mounted) return null;
+  
+    // Priorité : thème choisi par l'utilisateur > thème système > sombre par défaut
+    //const currentTheme = theme === "system" ? systemTheme : theme;
+    const isDark = theme === "dark";
 
   return (
     <section
-      className={`py-28 transition-colors duration-500 ${isDark ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
+      className={`py-28 transition-colors duration-500 ${isDark ? "bg-[#0f111a] text-white" : "bg-white text-gray-900"}`}
       aria-labelledby="why-heading"
     >
       <div className="max-w-7xl mx-auto px-6 text-center">

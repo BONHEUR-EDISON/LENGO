@@ -9,11 +9,15 @@ import { useTheme } from "next-themes";
 
 export default function TestimonialsCarousel() {
   const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const [mounted, setMounted] = useState(false);
+     
+       
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+
+  
 
   const cardWidth = 320; // largeur approximative d’une carte + marge
 
@@ -46,6 +50,11 @@ export default function TestimonialsCarousel() {
     refCurrent?.addEventListener("scroll", handleScroll);
     return () => refCurrent?.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => setMounted(true), []);
+      if (!mounted) return null;
+    
+      const isDark = theme === "dark";
 
   return (
     <section

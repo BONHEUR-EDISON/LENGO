@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 type TeamMember = { name: string; role: string; avatar: string; };
 
@@ -15,16 +16,18 @@ const team: TeamMember[] = [
 ];
 
 export default function TeamCarousel() {
-  // --- HOOKS TOUJOURS AU DÉBUT ---
+  // --- TOUS LES HOOKS SONT AU DÉBUT ---
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Constantes
   const cardWidth = 320;
   const extendedTeam = [...team, ...team, ...team]; // Infini
-  const isDark = true; // MODE SOMBRE FORCÉ
 
-  // Scroll helpers
+  useEffect(() => setMounted(true), []);
+
+  // --- Scroll helpers ---
   const scroll = (direction: 'left' | 'right') => {
     if (!carouselRef.current) return;
     carouselRef.current.scrollBy({
@@ -43,7 +46,6 @@ export default function TeamCarousel() {
     }
   };
 
-  // --- EFFECT DE SCROLL AUTOMATIQUE ---
   useEffect(() => {
     const ref = carouselRef.current;
     if (!ref) return;
@@ -65,21 +67,32 @@ export default function TeamCarousel() {
     };
   }, []);
 
-  return (
-    <section className={`py-20 sm:py-28 px-4 relative bg-gray-900 text-white transition-colors duration-500`}>
-      <h2 className="text-4xl font-bold text-center mb-12 text-white">Notre équipe</h2>
+  // --- Détermination du thème ---
+  const currentTheme = theme === 'system' ? systemTheme : theme;
+  const isDark = currentTheme === 'dark';
+
+  // --- RENDU ---
+  return mounted ? (
+    <section className={`py-20 sm:py-28 px-4 relative transition-colors duration-500 ${
+      isDark ? 'bg-[#0f111a] text-white' : 'bg-white text-gray-900'
+    }`}>
+      <h2 className="text-4xl font-bold text-center mb-12">{`Notre équipe`}</h2>
 
       {/* Flèches */}
       <button
         onClick={() => scroll('left')}
-        className="hidden md:flex absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg bg-gray-800 hover:bg-gray-700 text-white z-10"
+        className={`hidden md:flex absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg z-10 transition-colors ${
+          isDark ? 'bg-gray-800 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+        }`}
         aria-label="Précédent"
       >
         <ChevronLeft size={24} />
       </button>
       <button
         onClick={() => scroll('right')}
-        className="hidden md:flex absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg bg-gray-800 hover:bg-gray-700 text-white z-10"
+        className={`hidden md:flex absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg z-10 transition-colors ${
+          isDark ? 'bg-gray-800 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+        }`}
         aria-label="Suivant"
       >
         <ChevronRight size={24} />
@@ -93,7 +106,9 @@ export default function TeamCarousel() {
         {extendedTeam.map((member, index) => (
           <motion.div
             key={index}
-            className="flex-shrink-0 w-64 sm:w-72 md:w-80 rounded-xl p-6 flex flex-col items-center text-center shadow-lg bg-gray-800 hover:scale-105 transition-transform duration-300 snap-center"
+            className={`flex-shrink-0 w-64 sm:w-72 md:w-80 rounded-xl p-6 flex flex-col items-center text-center shadow-lg transition-transform duration-300 snap-center ${
+              isDark ? 'bg-gray-800 hover:scale-105' : 'bg-gray-100 hover:scale-105'
+            }`}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -106,8 +121,8 @@ export default function TeamCarousel() {
               height={96}
               className="rounded-full mb-4 object-cover"
             />
-            <h3 className="text-xl font-semibold text-white">{member.name}</h3>
-            <p className="text-sm text-gray-400">{member.role}</p>
+            <h3 className="text-xl font-semibold">{member.name}</h3>
+            <p className={`text-sm transition-colors ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{member.role}</p>
           </motion.div>
         ))}
       </div>
@@ -118,7 +133,7 @@ export default function TeamCarousel() {
           <button
             key={index}
             className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-              activeIndex === index ? 'bg-blue-400' : 'bg-gray-600'
+              activeIndex === index ? 'bg-blue-400' : isDark ? 'bg-gray-600' : 'bg-gray-400'
             }`}
             aria-label={`Membre ${index + 1}`}
             onClick={() => {
@@ -132,5 +147,5 @@ export default function TeamCarousel() {
 
       <div className="mt-28" />
     </section>
-  );
+  ) : null;
 }

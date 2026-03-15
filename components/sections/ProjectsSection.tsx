@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Project = {
   title: string;
@@ -22,13 +22,17 @@ const projects: Project[] = [
   { title: "Infrastructure technique", category: "Engineering", image: "/images/projects/engineering.jfif", result: "10 sites opérationnels" },
 ];
 
-// Extraire les catégories uniques pour le filtre
 const categories = ["Tous", ...Array.from(new Set(projects.map(p => p.category)))];
 
 export default function ProjectsSection() {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+   const { theme } = useTheme();
+    const [mounted, setMounted] = useState(false);
   const [activeCategory, setActiveCategory] = useState("Tous");
+    useEffect(() => setMounted(true), []);
+    if (!mounted) return null;
+  
+    const isDark = theme === "dark";
+  
 
   const filteredProjects = activeCategory === "Tous" ? projects : projects.filter(p => p.category === activeCategory);
 
@@ -38,7 +42,6 @@ export default function ProjectsSection() {
       aria-labelledby="projects-heading"
     >
       <div className="max-w-7xl mx-auto px-6">
-
         {/* HEADER */}
         <div className="text-center mb-12">
           <h2
@@ -73,49 +76,45 @@ export default function ProjectsSection() {
 
         {/* GRID PROJECTS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          <AnimatePresence>
-            {filteredProjects.map((project, index) => (
+          {filteredProjects.map((project, index) => (
+            <motion.div
+              key={project.title}
+              className={`group relative overflow-hidden rounded-3xl shadow-xl cursor-pointer transition-transform duration-500 ${isDark ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"}`}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.6 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              {/* IMAGE */}
+              <Image
+                src={project.image}
+                alt={project.title}
+                width={600}
+                height={400}
+                className="w-full aspect-[4/3] object-cover group-hover:scale-110 transition-transform duration-500"
+                priority={index === 0}
+                loading={index !== 0 ? "lazy" : "eager"}
+              />
+
+              {/* OVERLAY HOVER */}
               <motion.div
-                key={project.title}
-                layout
-                className={`group relative overflow-hidden rounded-3xl shadow-xl cursor-pointer transition-transform duration-500 ${isDark ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"}`}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                {/* IMAGE */}
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  width={600}
-                  height={400}
-                  className="w-full aspect-[4/3] object-cover group-hover:scale-110 transition-transform duration-500"
-                  priority={index === 0}
-                  loading={index !== 0 ? "lazy" : "eager"}
-                />
+                className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/30 via-transparent to-black/30 opacity-0 group-hover:opacity-100 transition duration-500 z-10"
+              />
 
-                {/* OVERLAY HOVER */}
-                <motion.div
-                  className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/30 via-transparent to-black/30 opacity-0 group-hover:opacity-100 transition duration-500 z-10"
-                />
-
-                {/* INFO */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 backdrop-blur-md bg-black/50 dark:bg-gray-900/50 rounded-b-3xl text-white">
-                  <span className="text-blue-400 text-sm">{project.category}</span>
-                  <h3 className="text-xl font-semibold mt-1">{project.title}</h3>
-                  {project.result && <p className="text-sm mt-1">{project.result}</p>}
-                  <Link
-                    href="/projects"
-                    className="inline-block mt-2 text-sm font-medium text-blue-300 hover:underline"
-                  >
-                    Voir le projet
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              {/* INFO */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 backdrop-blur-md bg-black/50 dark:bg-gray-900/50 rounded-b-3xl text-white">
+                <span className="text-blue-400 text-sm">{project.category}</span>
+                <h3 className="text-xl font-semibold mt-1">{project.title}</h3>
+                {project.result && <p className="text-sm mt-1">{project.result}</p>}
+                <Link
+                  href="/projects"
+                  className="inline-block mt-2 text-sm font-medium text-blue-300 hover:underline"
+                >
+                  Voir le projet
+                </Link>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         {/* BUTTON SEE MORE */}

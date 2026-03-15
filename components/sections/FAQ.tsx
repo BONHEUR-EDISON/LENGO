@@ -46,7 +46,7 @@ export default function FAQSection() {
   return (
     <section
       className={`py-20 px-4 sm:px-8 md:px-16 transition-colors duration-500 ${
-        isDark ? 'bg-black text-white' : 'bg-gray-50 text-gray-900'
+        isDark ? 'bg-[#0f111a] text-white' : 'bg-gray-50 text-gray-900'
       }`}
     >
       <h2 className="text-4xl font-bold text-center mb-12 transition-colors duration-500">

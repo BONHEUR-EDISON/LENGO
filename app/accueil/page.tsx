@@ -1,5 +1,9 @@
-import type { Metadata } from "next";
-import Reveal from "@/components/ui/Reveal";
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+import Loader from "@/components/ui/Loader";
 
 import Hero from "@/components/sections/Hero";
 import HeroAndServices from "@/components/sections/ServicesSection";
@@ -10,61 +14,56 @@ import BlogSection from "@/components/sections/BlogSection";
 import FAQSection from "@/components/sections/FAQ";
 import CTAContact from "@/components/sections/CTA";
 import WhyChooseUs from "@/components/sections/WhyChooseUs";
+import Reveal from "@/components/ui/Reveal";
 
-export const metadata: Metadata = {
-  title: "Accueil Engineering",
-  description:
-    "Solutions d’ingénierie avancée : construction métallique, automatisation industrielle, ascenseurs intelligents, domotique et technologies pour infrastructures modernes.",
-  keywords: [
-    "engineering",
-    "construction métallique",
-    "automatisation industrielle",
-    "smart elevators",
-    "domotique",
-    "industrial engineering",
-    "smart infrastructure",
-  ],
-  openGraph: {
-    title: "Accueil | Lengo Engineering",
-    description:
-      "Découvrez nos solutions d’ingénierie pour les infrastructures modernes et industrielles.",
-    type: "website",
-  },
-  robots: "index, follow",
-  alternates: {
-    canonical: "https://lengo-engineering.vercel.app/",
-  },
-};
+export default function AcceuilClient() {
+  const [loading, setLoading] = useState(true);
 
-export default function AcceuilPage() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main className="relative flex flex-col w-full overflow-x-hidden scroll-smooth">
+    <>
+      <Loader loading={loading} />
 
-      
+      <motion.main
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: loading ? 0 : 1, y: loading ? 40 : 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative w-full overflow-x-hidden scroll-smooth"
+      >
         <Hero />
-      
-      
-        <HeroAndServices />
-      
-      
-        <ProjectsSection />
-      
-      <WhyChooseUs />
 
-        <Testimonials />
-      
-      
-        <TeamSection />
-      
-      
-        <BlogSection />
-      
-      
-        <FAQSection />
-      
-      
-        <CTAContact />
-      
-    </main>
+        <HeroAndServices />
+
+        <Reveal>
+          <ProjectsSection />
+        </Reveal>
+        <Reveal>
+          <WhyChooseUs />
+        </Reveal>
+
+        <Reveal>
+          <Testimonials />
+        </Reveal>
+        <Reveal>
+          <TeamSection />
+        </Reveal>
+        <Reveal>
+          <BlogSection />
+        </Reveal>
+        <Reveal>
+          <FAQSection />
+        </Reveal>
+        <Reveal>
+          <CTAContact />
+        </Reveal>
+      </motion.main>
+    </>
   );
 }

@@ -22,19 +22,15 @@ export default function Hero() {
   const { scrollY } = useScroll();
   const parallax = useTransform(scrollY, [0, 500], [0, 120]);
 
-  // Montage côté client uniquement
   useEffect(() => setMounted(true), []);
 
-  // Slider mobile
   useEffect(() => {
     if (!mounted) return;
-
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % mobileImages.length);
     }, 5000);
-
     return () => clearInterval(interval);
-  }, [mounted]); // stable, aucune erreur de taille de tableau
+  }, [mounted]);
 
   const handlers = useSwipeable({
     onSwipedLeft: () => setCurrentImage((prev) => (prev + 1) % mobileImages.length),
@@ -56,16 +52,11 @@ export default function Hero() {
   ];
 
   return (
-    <section className="relative flex flex-col items-center justify-center overflow-hidden pt-24 md:pt-32 pb-24 md:pb-32 min-h-[85vh] md:min-h-screen">
-      
+    <section className="relative flex flex-col items-center justify-center overflow-hidden min-h-screen pt-24 md:pt-32 pb-24 md:pb-32">
       {/* BACKGROUND VIDEO / IMAGE */}
       <motion.div style={{ y: parallax }} className="absolute inset-0">
         <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
+          autoPlay muted loop playsInline preload="metadata"
           className="absolute inset-0 w-full h-full object-cover hidden md:block"
           onLoadedData={() => setVideoLoaded(true)}
         >
@@ -106,7 +97,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* OVERLAY & LIGHT EFFECTS */}
+      {/* OVERLAY */}
       <div className="absolute inset-0 z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
         <motion.div
@@ -138,7 +129,7 @@ export default function Hero() {
               key={i}
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: i * 0.08, type: "spring", stiffness: 120 }}
+              transition={{ delay: i * 0.1, type: "spring", stiffness: 120 }}
               className="inline-block mr-3 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
             >
               {word}
@@ -149,7 +140,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.9 }}
           className="text-gray-200 text-lg md:text-xl max-w-3xl"
         >
           Conception et installation d’ascenseurs intelligents, structures métalliques, automatisation industrielle et solutions de domotique avancée pour bâtiments modernes.
@@ -159,7 +150,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 1.1 }}
           className="flex flex-col sm:flex-row gap-4 mt-4"
         >
           <a
