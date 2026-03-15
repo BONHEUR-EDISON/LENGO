@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -44,47 +44,44 @@ function Counter({ value, suffix }: { value: number; suffix?: string }) {
   );
 }
 
-export default function Stats() {
-  return (
-    <div className="w-full max-w-5xl mx-auto mt-6 sm:mt-10">
+interface StatsProps {
+  className?: string;
+  gridCols?: string; // ✅ nouvelle prop optionnelle
+}
 
+export default function Stats({ className = "", gridCols = "grid-cols-1 sm:grid-cols-2 md:grid-cols-4" }: StatsProps) {
+  return (
+    <div className={`w-full max-w-7xl mx-auto mt-6 sm:mt-10 px-4 sm:px-6 ${className}`}>
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+        className={`grid ${gridCols} gap-4 sm:gap-6 md:gap-8`} // ✅ utilisation de la prop
       >
-
         {stats.map((stat, index) => (
           <motion.div
             key={index}
             whileHover={{ scale: 1.05 }}
             className="
-            backdrop-blur-xl
-            bg-white/10
-            dark:bg-white/5
-            border border-white/20
-            rounded-2xl
-            p-5
-            text-center
-            shadow-xl
+              backdrop-blur-xl
+              bg-white/10
+              dark:bg-white/5
+              border border-white/20
+              rounded-2xl
+              p-5 sm:p-6
+              text-center
+              shadow-xl
+              flex flex-col justify-center items-center
             "
           >
-
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
               <Counter value={stat.value} suffix={stat.suffix} />
             </div>
-
-            <p className="text-xs sm:text-sm text-gray-200 mt-2">
-              {stat.label}
-            </p>
-
+            <p className="text-xs sm:text-sm text-gray-200 mt-2">{stat.label}</p>
           </motion.div>
         ))}
-
       </motion.div>
-
     </div>
   );
 }

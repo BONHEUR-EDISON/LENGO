@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
+
 import Stats from "./hero/Stats";
+import HeroPartners from "./hero/Partners";
 
 const mobileImages = [
   "/images/hero-img1.jpg",
   "/images/hero-img2.jpg",
-  "/images/hero-img3.jpg",
+  "/images/hero-img1.jpg",
 ];
 
 export default function Hero() {
@@ -20,14 +22,19 @@ export default function Hero() {
   const { scrollY } = useScroll();
   const parallax = useTransform(scrollY, [0, 500], [0, 120]);
 
+  // Montage côté client uniquement
   useEffect(() => setMounted(true), []);
 
+  // Slider mobile
   useEffect(() => {
+    if (!mounted) return;
+
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % mobileImages.length);
     }, 5000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [mounted]); // stable, aucune erreur de taille de tableau
 
   const handlers = useSwipeable({
     onSwipedLeft: () => setCurrentImage((prev) => (prev + 1) % mobileImages.length),
@@ -37,11 +44,21 @@ export default function Hero() {
 
   if (!mounted) return null;
 
-  const titleWords = ["Ingénierie", "industrielle", "pour", "des", "infrastructures", "modernes", "et", "intelligentes"];
+  const titleWords: string[] = [
+    "Ingénierie",
+    "industrielle",
+    "pour",
+    "des",
+    "infrastructures",
+    "modernes",
+    "et",
+    "intelligentes",
+  ];
 
   return (
-    <section className="relative min-h-[85vh] pt-24 md:pt-32 pb-24 md:pb-32 flex items-center justify-center overflow-hidden">
-      {/* PARALLAX VIDEO/BACKGROUND */}
+    <section className="relative flex flex-col items-center justify-center overflow-hidden pt-24 md:pt-32 pb-24 md:pb-32 min-h-[85vh] md:min-h-screen">
+      
+      {/* BACKGROUND VIDEO / IMAGE */}
       <motion.div style={{ y: parallax }} className="absolute inset-0">
         <video
           autoPlay
@@ -81,13 +98,15 @@ export default function Hero() {
           {mobileImages.map((_, i) => (
             <span
               key={i}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${i === currentImage ? "bg-white scale-125 animate-pulse" : "bg-white/40"}`}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                i === currentImage ? "bg-white scale-125 animate-pulse" : "bg-white/40"
+              }`}
             />
           ))}
         </div>
       </div>
 
-      {/* OVERLAY + LIGHT EFFECTS */}
+      {/* OVERLAY & LIGHT EFFECTS */}
       <div className="absolute inset-0 z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
         <motion.div
@@ -103,7 +122,7 @@ export default function Hero() {
       </div>
 
       {/* CONTENT */}
-      <div className="relative z-20 max-w-6xl mx-auto px-6 text-center flex flex-col items-center gap-8">
+      <div className="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center gap-6">
         <motion.span
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -119,7 +138,7 @@ export default function Hero() {
               key={i}
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: i * 0.08, type: 'spring', stiffness: 120 }}
+              transition={{ delay: i * 0.08, type: "spring", stiffness: 120 }}
               className="inline-block mr-3 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
             >
               {word}
@@ -136,7 +155,7 @@ export default function Hero() {
           Conception et installation d’ascenseurs intelligents, structures métalliques, automatisation industrielle et solutions de domotique avancée pour bâtiments modernes.
         </motion.p>
 
-        {/* CTA */}
+        {/* CTA BUTTONS */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -158,8 +177,13 @@ export default function Hero() {
         </motion.div>
 
         {/* STATS */}
-        <div className="w-full flex justify-center mt-8">
-          <Stats />
+        <div className="w-full mt-10">
+          <Stats gridCols="grid-cols-2 sm:grid-cols-2 md:grid-cols-4" />
+        </div>
+
+        {/* PARTNERS */}
+        <div className="w-full mt-10">
+          <HeroPartners />
         </div>
       </div>
 
@@ -167,13 +191,13 @@ export default function Hero() {
       <motion.div
         animate={{ y: [0, 12, 0] }}
         transition={{ repeat: Infinity, duration: 1.6 }}
-        className="absolute bottom-10 text-white/70 flex flex-col items-center"
+        className="absolute bottom-10 text-white/70 flex flex-col items-center z-20"
       >
         <span className="text-sm">Découvrir</span>
         <span className="text-2xl animate-bounce">↓</span>
       </motion.div>
 
-      {/* TRANSITION */}
+      {/* BOTTOM FADE */}
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-gray-50 dark:to-black" />
     </section>
   );

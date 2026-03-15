@@ -3,14 +3,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import Image from 'next/image';
 
-type TeamMember = {
-  name: string;
-  role: string;
-  avatar: string;
-};
+type TeamMember = { name: string; role: string; avatar: string; };
 
 const team: TeamMember[] = [
   { name: 'Jean Mbala', role: 'CEO', avatar: '/images/avatar-male.png' },
@@ -20,18 +15,22 @@ const team: TeamMember[] = [
 ];
 
 export default function TeamCarousel() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
+  // --- HOOKS TOUJOURS AU DÉBUT ---
   const carouselRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const extendedTeam = [...team, ...team, ...team]; // effet infini
+  // Constantes
   const cardWidth = 320;
+  const extendedTeam = [...team, ...team, ...team]; // Infini
+  const isDark = true; // MODE SOMBRE FORCÉ
 
+  // Scroll helpers
   const scroll = (direction: 'left' | 'right') => {
     if (!carouselRef.current) return;
-    carouselRef.current.scrollBy({ left: direction === 'left' ? -cardWidth : cardWidth, behavior: 'smooth' });
+    carouselRef.current.scrollBy({
+      left: direction === 'left' ? -cardWidth : cardWidth,
+      behavior: 'smooth'
+    });
   };
 
   const resetScrollIfNeeded = () => {
@@ -44,6 +43,7 @@ export default function TeamCarousel() {
     }
   };
 
+  // --- EFFECT DE SCROLL AUTOMATIQUE ---
   useEffect(() => {
     const ref = carouselRef.current;
     if (!ref) return;
@@ -57,7 +57,6 @@ export default function TeamCarousel() {
     };
 
     ref.addEventListener('scroll', handleScroll);
-
     const interval = setInterval(() => scroll('right'), 3000);
 
     return () => {
@@ -67,31 +66,20 @@ export default function TeamCarousel() {
   }, []);
 
   return (
-    <section
-      className={`py-20 sm:py-28 px-4 sm:px-8 md:px-16 relative transition-colors duration-500 ${
-        isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
-      }`}
-    >
-      <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-500 ${isDark ? 'text-white' : 'text-black'}`}>
-        Notre équipe
-      </h2>
+    <section className={`py-20 sm:py-28 px-4 relative bg-gray-900 text-white transition-colors duration-500`}>
+      <h2 className="text-4xl font-bold text-center mb-12 text-white">Notre équipe</h2>
 
-      {/* Flèches desktop */}
+      {/* Flèches */}
       <button
         onClick={() => scroll('left')}
-        className={`hidden md:flex absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg z-10 transition-colors duration-300 ${
-          isDark ? 'bg-gray-800 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-black'
-        }`}
+        className="hidden md:flex absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg bg-gray-800 hover:bg-gray-700 text-white z-10"
         aria-label="Précédent"
       >
         <ChevronLeft size={24} />
       </button>
-
       <button
         onClick={() => scroll('right')}
-        className={`hidden md:flex absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg z-10 transition-colors duration-300 ${
-          isDark ? 'bg-gray-800 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-black'
-        }`}
+        className="hidden md:flex absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-3 shadow-lg bg-gray-800 hover:bg-gray-700 text-white z-10"
         aria-label="Suivant"
       >
         <ChevronRight size={24} />
@@ -105,17 +93,21 @@ export default function TeamCarousel() {
         {extendedTeam.map((member, index) => (
           <motion.div
             key={index}
-            className={`flex-shrink-0 w-64 sm:w-72 md:w-80 rounded-xl p-6 flex flex-col items-center text-center shadow-lg snap-center transition-transform duration-300 ${
-              isDark ? 'bg-gray-800 hover:scale-105' : 'bg-gray-100 hover:scale-105'
-            }`}
+            className="flex-shrink-0 w-64 sm:w-72 md:w-80 rounded-xl p-6 flex flex-col items-center text-center shadow-lg bg-gray-800 hover:scale-105 transition-transform duration-300 snap-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: (index % team.length) * 0.2 }}
           >
-            <Image src={member.avatar} alt={member.name} width={96} height={96} className="rounded-full mb-4 object-cover" />
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-black'}`}>{member.name}</h3>
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{member.role}</p>
+            <Image
+              src={member.avatar}
+              alt={member.name}
+              width={96}
+              height={96}
+              className="rounded-full mb-4 object-cover"
+            />
+            <h3 className="text-xl font-semibold text-white">{member.name}</h3>
+            <p className="text-sm text-gray-400">{member.role}</p>
           </motion.div>
         ))}
       </div>
@@ -126,7 +118,7 @@ export default function TeamCarousel() {
           <button
             key={index}
             className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-              activeIndex === index ? (isDark ? 'bg-blue-400' : 'bg-blue-500') : (isDark ? 'bg-gray-600' : 'bg-gray-300')
+              activeIndex === index ? 'bg-blue-400' : 'bg-gray-600'
             }`}
             aria-label={`Membre ${index + 1}`}
             onClick={() => {
@@ -138,7 +130,6 @@ export default function TeamCarousel() {
         ))}
       </div>
 
-      {/* Espace pour section suivante */}
       <div className="mt-28" />
     </section>
   );

@@ -1,175 +1,230 @@
-'use client';
+'use client'
 
+import { useCart } from "@/context/CartContext"
+import Link from "next/link"
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
+import { Lock, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { useTheme } from "next-themes"
 
-import { useCart } from "@/context/CartContext";
-import Link from "next/link";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "next-themes";
-import { useState } from "react";
+type Step = "cart" | "checkout" | "success"
 
 export default function PanierDetailPage() {
-  const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
-  const { theme } = useTheme();
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  // Modale
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"delete" | "clear" | "checkout" | null>(null);
-  const [modalItemId, setModalItemId] = useState<number | null>(null);
+  const { cart, removeFromCart, clearCart, updateQuantity } = useCart()
+  const { theme } = useTheme() // hook pour détecter light/dark
 
-  const openModal = (action: "delete" | "clear" | "checkout", id?: number) => {
-    setModalAction(action);
-    setModalItemId(id ?? null);
-    setModalOpen(true);
-  };
+  const [step,setStep] = useState<Step>("cart")
+  const [email,setEmail] = useState("")
+  const [phone,setPhone] = useState("")
+  const [paymentMethod,setPaymentMethod] = useState<"stripe" | "mobilemoney">("mobilemoney")
 
-  const confirmAction = () => {
-    if (modalAction === "delete" && modalItemId !== null) removeFromCart(modalItemId);
-    else if (modalAction === "clear") clearCart();
-    else if (modalAction === "checkout") alert("Redirection vers la caisse...");
-    setModalOpen(false);
-    setModalAction(null);
-    setModalItemId(null);
-  };
+  const total = cart.reduce(
+    (acc,item)=> acc + item.price * item.quantity,
+    0
+  )
 
-  if (cart.length === 0)
-    return (
-      <div className="container mx-auto text-center py-30">
-        <h1 className={`text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
-          Votre panier est vide
-        </h1>
-        <Link
-          href="/produits"
-          className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
+  async function handleCheckout(){
+    try{
+      const res = await fetch("/api/checkout",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json"},
+        body:JSON.stringify({
+          cart,
+          email,
+          phone,
+          method:paymentMethod
+        })
+      })
+
+      const data = await res.json()
+
+      if(data.url){
+        window.location.href = data.url
+      }else{
+        setStep("success")
+        clearCart()
+      }
+
+    }catch(err){
+      console.error(err)
+      alert("Erreur paiement")
+    }
+  }
+
+  // --- SUCCESS SCREEN ---
+  if(step==="success"){
+    return(
+      <div className={`min-h-screen flex items-center justify-center ${
+        theme==="dark"?"bg-gray-900 text-white":"bg-gray-50 text-gray-900"
+      }`}>
+        <motion.div
+          initial={{scale:0.9,opacity:0}}
+          animate={{scale:1,opacity:1}}
+          className={`p-14 rounded-3xl border ${
+            theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"
+          } text-center max-w-md`}
         >
-          Voir nos produits
-        </Link>
+          <h1 className="text-4xl font-semibold mb-4 text-green-500">Paiement réussi 🎉</h1>
+          <p className={`text-lg mb-8 ${theme==="dark"?"text-gray-300":"text-gray-700"}`}>Merci pour votre commande</p>
+          <Link href="/produits" className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white">
+            Continuer les achats
+          </Link>
+        </motion.div>
       </div>
-    );
+    )
+  }
 
-  return (
-    <div className="container mx-auto px-4 py-6 space-y-8">
+  // --- CHECKOUT SCREEN ---
+  if(step==="checkout"){
+    return(
+      <div className={`${theme==="dark"?"bg-gray-900 text-white":"bg-gray-50 text-gray-900"} min-h-screen`}>
+        <div className="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-20">
 
-      <h1 className={`text-4xl font-bold pt-24 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
-        Votre Panier
-      </h1>
+          {/* LEFT */}
+          <div className="space-y-10">
+            <h1 className="text-4xl font-semibold">Paiement</h1>
 
-      <div className="space-y-4">
+            <div className="space-y-6">
+              <input
+                placeholder="Email"
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
+                className={`w-full px-5 py-4 rounded-2xl border ${
+                  theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"
+                }`}
+              />
+              <input
+                placeholder="Téléphone"
+                value={phone}
+                onChange={(e)=>setPhone(e.target.value)}
+                className={`w-full px-5 py-4 rounded-2xl border ${
+                  theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"
+                }`}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <button
+                onClick={()=>setPaymentMethod("mobilemoney")}
+                className={`w-full p-6 rounded-2xl border ${
+                  paymentMethod==="mobilemoney"?"border-green-400 bg-green-500/10":theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"
+                }`}
+              >
+                📱 Mobile Money
+              </button>
+
+              <button
+                onClick={()=>setPaymentMethod("stripe")}
+                className={`w-full p-6 rounded-2xl border ${
+                  paymentMethod==="stripe"?"border-blue-400 bg-blue-500/10":theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"
+                }`}
+              >
+                💳 Carte bancaire
+              </button>
+            </div>
+
+            <motion.button
+              whileTap={{scale:0.97}}
+              whileHover={{scale:1.02}}
+              onClick={handleCheckout}
+              className="w-full py-5 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 flex justify-center gap-2 items-center font-semibold text-white"
+            >
+              <Lock size={18}/> Payer ${total.toFixed(2)}
+            </motion.button>
+
+            <button onClick={()=>setStep("cart")} className={`text-sm underline ${theme==="dark"?"text-gray-400":"text-gray-700"}`}>Retour panier</button>
+          </div>
+
+          {/* RIGHT */}
+          <div className={`p-10 rounded-3xl border ${theme==="dark"?"border-white/10 bg-white/5":"border-gray-200 bg-white"}`}>
+            <h2 className="text-xl font-semibold mb-6">Résumé commande</h2>
+            <div className="space-y-6">
+              {cart.map(item=>(
+                <div key={item.id} className="flex justify-between">
+                  <div className="flex gap-4">
+                    <Image src={item.image || "/images/produits/fallback.png"} alt={item.name} width={60} height={60} className="rounded-lg"/>
+                    <div>
+                      <p>{item.name}</p>
+                      <p className={`text-sm ${theme==="dark"?"text-gray-400":"text-gray-500"}`}>x{item.quantity}</p>
+                    </div>
+                  </div>
+                  <p>${(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+              ))}
+            </div>
+            <hr className={`my-6 border ${theme==="dark"?"border-white/10":"border-gray-200"}`}/>
+            <div className="flex justify-between font-semibold text-lg">
+              <span>Total</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    )
+  }
+
+  // --- EMPTY CART ---
+  if(cart.length===0){
+    return(
+      <div className={`min-h-screen flex items-center justify-center ${
+        theme==="dark"?"bg-gray-900 text-white":"bg-gray-50 text-gray-900"
+      }`}>
+        <div className="text-center">
+          <h1 className="text-3xl font-semibold mb-6">Votre panier est vide</h1>
+          <Link href="/produits" className={`px-6 py-3 rounded-xl ${theme==="dark"?"bg-white text-black":"bg-black text-white"}`}>Voir les produits</Link>
+        </div>
+      </div>
+    )
+  }
+
+  // --- CART SCREEN ---
+  return(
+    <div className={`min-h-screen ${theme==="dark"?"bg-gray-900 text-white":"bg-gray-50 text-gray-900"}`}>
+      <div className="max-w-6xl mx-auto px-6 py-24 space-y-10">
+        <h1 className="text-4xl font-semibold">Votre panier</h1>
         <AnimatePresence>
-          {cart.map(item => (
+          {cart.map(item=>(
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
               layout
-              className={`flex justify-between items-center border rounded p-4 transition-colors ${
-                theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-white"
+              initial={{opacity:0,y:20}}
+              animate={{opacity:1,y:0}}
+              exit={{opacity:0,y:-20}}
+              className={`flex justify-between items-center rounded-2xl p-6 border ${
+                theme==="dark"?"bg-white/5 border-white/10":"bg-white border-gray-200"
               }`}
             >
-              <div className="flex gap-4 items-center">
-                <Image
-                  src={item.image || "/images/produits/fallback.png"}
-                  alt={item.name}
-                  width={96}
-                  height={96}
-                  className="rounded object-cover"
-                />
+              <div className="flex gap-6 items-center">
+                <Image src={item.image || "/images/produits/fallback.png"} alt={item.name} width={90} height={90} className="rounded-xl"/>
                 <div>
-                  <h2 className={`font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>{item.name}</h2>
-                  <div className="flex items-center gap-2 mt-1">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      disabled={item.quantity <= 1}
-                      className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                    >
-                      -
-                    </button>
-                    <span className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                    >
-                      +
-                    </button>
+                  <h2 className="font-semibold text-lg">{item.name}</h2>
+                  <div className="flex gap-2 mt-2">
+                    <button onClick={()=>updateQuantity(item.id,item.quantity-1)} className="px-3 py-1 rounded bg-white/10">-</button>
+                    <span className="px-3">{item.quantity}</span>
+                    <button onClick={()=>updateQuantity(item.id,item.quantity+1)} className="px-3 py-1 rounded bg-white/10">+</button>
                   </div>
                 </div>
               </div>
-
-              <div className="flex flex-col items-end">
-                <p className={`font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
-                  ${(item.price * item.quantity).toFixed(2)}
-                </p>
-                <button
-                  onClick={() => openModal("delete", item.id)}
-                  className="text-red-600 dark:text-red-400 underline mt-2 hover:text-red-800 dark:hover:text-red-300"
-                >
-                  Supprimer
-                </button>
+              <div className="flex flex-col items-end gap-2">
+                <p className="font-semibold text-lg">${(item.price * item.quantity).toFixed(2)}</p>
+                <button onClick={()=>removeFromCart(item.id)} className="flex items-center gap-1 text-red-400 text-sm"><Trash2 size={16}/> Supprimer</button>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
+
+        <div className="flex justify-between items-center mt-12">
+          <p className="text-2xl font-semibold">Total: ${total.toFixed(2)}</p>
+          <div className="flex gap-4">
+            <button onClick={()=>setStep("checkout")} className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white">Passer à la caisse</button>
+            <button onClick={clearCart} className="px-6 py-4 rounded-xl bg-red-500 text-white">Vider</button>
+          </div>
+        </div>
+
       </div>
-
-      <div className="flex flex-col md:flex-row justify-end items-center gap-4">
-        <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
-          Total: ${total.toFixed(2)}
-        </p>
-        <button
-          onClick={() => openModal("checkout")}
-          className="bg-blue-600 dark:bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition"
-        >
-          Passer à la caisse
-        </button>
-        <button
-          onClick={() => openModal("clear")}
-          className="bg-red-600 dark:bg-red-500 text-white px-6 py-3 rounded hover:bg-red-700 dark:hover:bg-red-600 transition"
-        >
-          Vider le panier
-        </button>
-      </div>
-
-      {/* MODALE */}
-      <AnimatePresence>
-        {modalOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg w-80 text-center"
-            >
-              <p className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                {modalAction === "delete" && "Voulez-vous vraiment supprimer cet article ?"}
-                {modalAction === "clear" && "Voulez-vous vraiment vider le panier ?"}
-                {modalAction === "checkout" && "Voulez-vous passer au paiement ?"}
-              </p>
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={confirmAction}
-                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                >
-                  Oui
-                </button>
-                <button
-                  onClick={() => setModalOpen(false)}
-                  className="bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-100 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
-                >
-                  Non
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
     </div>
-  );
+  )
 }
