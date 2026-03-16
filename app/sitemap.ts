@@ -3,58 +3,49 @@ import { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/getAllPosts";
 import { getAllProduitSlugs } from "@/lib/produits";
 
+// type littéral pour éviter le cast répété
+type ChangeFreq = "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+
+interface SitemapEntry {
+  url: string;
+  lastModified: Date;
+  changeFrequency: ChangeFreq;
+  priority: number;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // 1️⃣ Pages dynamiques du blog
   const posts = await getAllPosts();
-  const postUrls = posts.map(post => ({
-    url: `https://lengo-engineeringg.vercel.app/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
-
-  // 2️⃣ Pages dynamiques des produits
   const productSlugs = await getAllProduitSlugs();
-  const productUrls = productSlugs.map(slug => ({
-    url: `https://lengo-engineeringg.vercel.app/produits/${slug}`,
-    lastModified: new Date(), // si tu as une date spécifique, remplace ici
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
 
-  // 3️⃣ Pages principales
-  const mainPages: MetadataRoute.Sitemap = [
-    {
-      url: "https://lengo-engineeringg.vercel.app",
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: "https://lengo-engineeringg.vercel.app/blog",
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: "https://lengo-engineeringg.vercel.app/produits",
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: "https://lengo-engineeringg.vercel.app/services",
-      lastModified: new Date(),
-      changeFrequency: "weekly",
+  // Fusion de toutes les URLs dynamiques et statiques
+  const urls: SitemapEntry[] = [
+    // Pages principales
+    { url: "/", lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
+    { url: "/blog", lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { url: "/produits", lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: "/services", lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: "/contact", lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+
+    // Pages du blog
+    ...posts.map(post => ({
+      url: `/blog/${post.slug}`,
+      lastModified: new Date(post.date),
+      changeFrequency: "weekly" as const,
       priority: 0.7,
-    },
-    {
-      url: "https://lengo-engineeringg.vercel.app/contact",
+    })),
+
+    // Pages produits
+    ...productSlugs.map(slug => ({
+      url: `/produits/${slug}`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
   ];
 
-  return [...mainPages, ...postUrls, ...productUrls];
+  // On préfixe automatiquement le domaine pour Vercel
+  return urls.map(entry => ({
+    ...entry,
+    url: `https://lengo-engineeringg.vercel.app${entry.url}`,
+  }));
 }
