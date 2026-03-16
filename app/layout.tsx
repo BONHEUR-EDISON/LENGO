@@ -10,6 +10,7 @@ import { CartProvider } from "@/context/CartContext";
 import { CartToastProvider } from "@/context/CartToastContext";
 import ReadingProgress from "@/components/Blog/ReadingProgress";
 import InstallApp from "@/components/install-app";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -96,9 +97,10 @@ export default function RootLayout({
 
                 {/* Layout flex vertical */}
                 <div className="flex min-h-screen flex-col">
-<InstallApp />
-                  <Header />
 
+<Analytics/>
+                  <Header />
+<InstallApp />
                   <main className="flex-1 w-full overflow-x-hidden">
                     {children}
                   </main>
